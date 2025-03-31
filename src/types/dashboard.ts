@@ -15,13 +15,13 @@ export interface DashboardWidget {
   
   // For chart widgets
   chartType?: 'bar' | 'line' | 'pie' | 'area';
-  data?: Array<{ name: string; value: number }>;
+  chartData?: Array<{ name: string; value: number }>;
   
   // For activity widgets
   activities?: Array<{ id: string; user: string; action: string; time: string }>;
   
   // For leaderboard widgets
-  data?: Array<{ id: string; name: string; score: number; avatar?: string }>;
+  leaderboardData?: Array<{ id: string; name: string; score: number; avatar?: string }>;
 }
 
 export interface Dashboard {

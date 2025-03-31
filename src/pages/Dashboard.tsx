@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
             key={widget.id}
             title={widget.title}
             chartType={widget.chartType || 'bar'}
-            data={widget.data || []}
+            data={widget.chartData || []}
             color={widget.color}
           />
         );
@@ -64,7 +64,7 @@ const Dashboard: React.FC = () => {
           <LeaderboardCard
             key={widget.id}
             title={widget.title}
-            data={widget.data || []}
+            data={widget.leaderboardData || []}
           />
         );
         

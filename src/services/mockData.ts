@@ -1,4 +1,3 @@
-
 import { User } from '../types/auth';
 import { 
   Dashboard, 
@@ -9,6 +8,7 @@ import {
   Marketplace, 
   ImpactCategory 
 } from '../types/dashboard';
+import { LeaderboardEntry } from '../components/dashboard/LeaderboardCard';
 
 // Mock Users
 export const mockUsers: User[] = [
@@ -85,7 +85,7 @@ export const mockWidgets: DashboardWidget[] = [
     type: 'chart',
     chartType: 'bar',
     title: 'Impact by Category',
-    data: [
+    chartData: [
       { name: 'Environment', value: 35 },
       { name: 'Education', value: 25 },
       { name: 'Health', value: 20 },
@@ -99,7 +99,7 @@ export const mockWidgets: DashboardWidget[] = [
     type: 'chart',
     chartType: 'line',
     title: 'Monthly Volunteer Hours',
-    data: [
+    chartData: [
       { name: 'Jan', value: 120 },
       { name: 'Feb', value: 150 },
       { name: 'Mar', value: 180 },
@@ -123,7 +123,7 @@ export const mockWidgets: DashboardWidget[] = [
     id: '8',
     type: 'leaderboard',
     title: 'Top Contributors',
-    data: [
+    leaderboardData: [
       { id: '1', name: 'Team Alpha', score: 1280, avatar: 'https://i.pravatar.cc/150?img=1' },
       { id: '2', name: 'Green Initiative', score: 1150, avatar: 'https://i.pravatar.cc/150?img=2' },
       { id: '3', name: 'Tech for Good', score: 980, avatar: 'https://i.pravatar.cc/150?img=3' },

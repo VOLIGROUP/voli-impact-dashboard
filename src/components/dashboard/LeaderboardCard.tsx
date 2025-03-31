@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface LeaderboardEntry {
+export interface LeaderboardEntry {
   id: string;
   name: string;
   score: number;
