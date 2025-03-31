@@ -9,16 +9,18 @@ import ChartCard from '../components/dashboard/ChartCard';
 import ActivityCard from '../components/dashboard/ActivityCard';
 import LeaderboardCard from '../components/dashboard/LeaderboardCard';
 import { Button } from "@/components/ui/button";
-import { PlusCircle, LayoutGrid, Settings2 } from 'lucide-react';
+import { PlusCircle, LayoutGrid, Settings2, FileUp } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import AddImpactDataDialog from '@/components/impact/AddImpactDataDialog';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [selectedDashboardId, setSelectedDashboardId] = useState<string>(
     getDefaultDashboard()?.id || mockDashboards[0]?.id
   );
+  const [impactDialogOpen, setImpactDialogOpen] = useState(false);
   
   const widgets = getWidgetsForDashboard(selectedDashboardId);
   const selectedDashboard = mockDashboards.find(d => d.id === selectedDashboardId);
@@ -108,6 +110,14 @@ const Dashboard: React.FC = () => {
               <Settings2 className="h-4 w-4" />
             </Button>
             
+            <Button 
+              onClick={() => setImpactDialogOpen(true)} 
+              className="bg-voli-primary hover:bg-voli-secondary text-black"
+            >
+              <FileUp className="h-4 w-4 mr-2" />
+              Add Impact Data
+            </Button>
+            
             <Button className="bg-voli-primary hover:bg-voli-secondary text-black">
               <PlusCircle className="h-4 w-4 mr-2" />
               New Dashboard
@@ -172,6 +182,8 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </div>
+      
+      <AddImpactDataDialog open={impactDialogOpen} onOpenChange={setImpactDialogOpen} />
     </Layout>
   );
 };
