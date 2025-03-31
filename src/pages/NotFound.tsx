@@ -1,24 +1,36 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
-const NotFound = () => {
-  const location = useLocation();
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Home, ArrowLeft } from 'lucide-react';
 
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
+const NotFound: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+      <img src="/voli-logo.png" alt="VOLI" className="h-16 mb-8" />
+      
+      <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+      <p className="text-xl text-gray-600 mb-8">
+        Oops! We couldn't find the page you're looking for.
+      </p>
+      
+      <div className="flex space-x-4">
+        <Button asChild variant="outline">
+          <Link to="/dashboard">
+            <Home className="h-4 w-4 mr-2" />
+            Go to Dashboard
+          </Link>
+        </Button>
+        
+        <Button
+          asChild
+          className="bg-voli-primary hover:bg-voli-secondary text-black"
+        >
+          <Link to="/">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Link>
+        </Button>
       </div>
     </div>
   );
