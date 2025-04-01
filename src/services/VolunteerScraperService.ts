@@ -9,11 +9,11 @@ export const scrapeVolunteerOpportunities = async (): Promise<Marketplace[]> => 
   // Simulate API call with timeout
   await new Promise(resolve => setTimeout(resolve, 1500));
   
-  // Return mock scraped opportunities with the correct type
+  // Return mock scraped opportunities
   return [
     {
       id: 'v1',
-      type: 'volunteer' as const,
+      type: 'volunteer',
       title: 'Beach Cleanup Initiative',
       organization: 'Ocean Conservation Alliance',
       location: 'Sydney, NSW',
@@ -35,7 +35,7 @@ export const scrapeVolunteerOpportunities = async (): Promise<Marketplace[]> => 
     },
     {
       id: 'v2',
-      type: 'volunteer' as const,
+      type: 'volunteer',
       title: 'Senior Companion Program',
       organization: 'Community Care Australia',
       location: 'Brisbane, QLD',
@@ -58,7 +58,7 @@ export const scrapeVolunteerOpportunities = async (): Promise<Marketplace[]> => 
     },
     {
       id: 'v3',
-      type: 'volunteer' as const,
+      type: 'volunteer',
       title: 'Coding Mentors for Kids',
       organization: 'Future Coders',
       location: 'Melbourne, VIC',
@@ -81,7 +81,7 @@ export const scrapeVolunteerOpportunities = async (): Promise<Marketplace[]> => 
     },
     {
       id: 'v4',
-      type: 'volunteer' as const,
+      type: 'volunteer',
       title: 'Community Garden Helpers',
       organization: 'Urban Greening Project',
       location: 'Perth, WA',
@@ -103,7 +103,7 @@ export const scrapeVolunteerOpportunities = async (): Promise<Marketplace[]> => 
     },
     {
       id: 'v5',
-      type: 'volunteer' as const,
+      type: 'volunteer',
       title: 'Wildlife Rescue Support',
       organization: 'Australian Wildlife Conservancy',
       location: 'Adelaide, SA',
