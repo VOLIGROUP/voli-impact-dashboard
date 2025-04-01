@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { mockMarketplace, mockImpactCategories } from '../services/mockData';
+import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '../services/mockMarketplace';
 import { scrapeVolunteerOpportunities } from '../services/VolunteerScraperService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,12 +20,10 @@ const Marketplace: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   
-  // Function to load scraped volunteer opportunities
   const loadScrapedOpportunities = async () => {
     setIsLoading(true);
     try {
       const scrapedItems = await scrapeVolunteerOpportunities();
-      // Merge with existing fundraising items
       const fundraisingItems = marketplaceItems.filter(item => item.type === 'fundraising');
       setMarketplaceItems([...scrapedItems, ...fundraisingItems]);
       toast({
@@ -45,7 +42,6 @@ const Marketplace: React.FC = () => {
     }
   };
   
-  // Load scraped opportunities on initial load
   useEffect(() => {
     loadScrapedOpportunities();
   }, []);

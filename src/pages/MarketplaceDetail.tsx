@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '../services/mockData';
+import { mockImpactCategories, getMarketplaceItemById } from '../services/mockMarketplace';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
