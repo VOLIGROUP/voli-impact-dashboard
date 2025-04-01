@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { User } from '@/types/auth';
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +12,7 @@ interface MapViewProps {
 
 declare global {
   interface Window {
-    google: typeof google;
+    google: any;
     initMap: () => void;
   }
 }
@@ -20,7 +21,6 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [apiKey, setApiKey] = useState<string>("");
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
-  const [scriptLoaded, setScriptLoaded] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   
   // Group users by location
@@ -34,167 +34,143 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
     }
   });
 
-  // Load Google Maps API
+  // Initialize map when API key is provided
   useEffect(() => {
-    if (!apiKey) return;
+    if (!apiKey || !mapContainer.current) return;
     
+    // Update the API key in the inline script
     try {
-      // Clean up any existing script to avoid duplicates
-      const existingScript = document.getElementById('google-maps-script');
-      if (existingScript) {
-        document.head.removeChild(existingScript);
+      const script = document.querySelector('script:first-of-type');
+      if (script) {
+        const scriptContent = script.textContent;
+        if (scriptContent && scriptContent.includes('INSERT_YOUR_API_KEY')) {
+          const updatedContent = scriptContent.replace('INSERT_YOUR_API_KEY', apiKey);
+          script.textContent = updatedContent;
+        }
       }
       
-      // Define the callback function
-      window.initMap = () => {
-        setScriptLoaded(true);
-        setMapLoaded(true);
-      };
-      
-      // Create and add the script tag
-      const script = document.createElement('script');
-      script.id = 'google-maps-script';
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      script.onerror = () => {
-        setError('Failed to load Google Maps API. Please check your API key.');
-      };
-      
-      document.head.appendChild(script);
-      
-      return () => {
-        // Clean up
-        if (document.getElementById('google-maps-script')) {
-          document.head.removeChild(script);
-        }
-        
-        if (window.google && window.google.maps) {
-          // This helps prevent issues with reloading the API
-          delete window.google.maps;
-        }
-        
-        delete window.initMap;
-      };
-    } catch (error) {
-      setError('Error setting up Google Maps: ' + (error as Error).message);
-    }
-  }, [apiKey]);
-  
-  // Initialize map when API is loaded
-  useEffect(() => {
-    if (!mapContainer.current || !scriptLoaded || !window.google || !window.google.maps) return;
-    
-    try {
-      initMap();
-    } catch (error) {
-      setError('Error initializing map: ' + (error as Error).message);
-    }
-  }, [scriptLoaded, users]);
-  
-  // Function to initialize Google Maps
-  const initMap = () => {
-    if (!mapContainer.current || !window.google || !window.google.maps) return;
-    
-    // Create a new map instance
-    const map = new window.google.maps.Map(mapContainer.current, {
-      center: { lat: 0, lng: 0 },
-      zoom: 2,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: true,
-    });
-    
-    const bounds = new window.google.maps.LatLngBounds();
-    const infoWindow = new window.google.maps.InfoWindow();
-    
-    // Add markers for each user
-    const markers: google.maps.Marker[] = [];
-    
-    users.forEach(user => {
-      if (user.coordinates) {
-        const [lng, lat] = user.coordinates;
-        const position = { lat, lng };
-        
-        // Extend bounds to include this point
-        bounds.extend(position);
-        
-        // Create a custom marker
-        const marker = new window.google.maps.Marker({
-          position,
-          map,
-          title: user.name,
-          icon: {
-            url: user.avatarUrl || 'https://i.pravatar.cc/40',
-            scaledSize: new window.google.maps.Size(30, 30),
-            origin: new window.google.maps.Point(0, 0),
-            anchor: new window.google.maps.Point(15, 15),
-          }
-        });
-        
-        markers.push(marker);
-        
-        // Create popup content
-        const content = `
-          <div class="p-3">
-            <div class="flex items-center mb-2">
-              <img src="${user.avatarUrl || 'https://i.pravatar.cc/40'}" class="w-10 h-10 rounded-full mr-3" />
-              <div>
-                <h3 class="font-bold">${user.name}</h3>
-                <p class="text-sm text-gray-600">${user.role}</p>
-              </div>
-            </div>
-            ${user.organization ? `<p class="text-sm text-gray-500">${user.organization}</p>` : ''}
-            <p class="text-sm text-gray-500">${user.location}</p>
-          </div>
-        `;
-        
-        // Add click listener for the popup
-        marker.addListener("click", () => {
-          infoWindow.setContent(content);
-          infoWindow.open({
-            anchor: marker,
-            map,
+      // Define the initMap function
+      window.initMap = async function() {
+        try {
+          // Clear any previous error
+          setError(null);
+          
+          // Import necessary libraries
+          const { Map } = await window.google.maps.importLibrary("maps");
+          const { AdvancedMarkerElement, PinElement } = await window.google.maps.importLibrary("marker");
+          
+          // Create a new map instance
+          const map = new Map(mapContainer.current, {
+            zoom: 2,
+            center: { lat: 0, lng: 0 },
+            mapId: "TEAM_MAP",
           });
-        });
-      }
-    });
-    
-    // Fit map to show all markers
-    if (!bounds.isEmpty()) {
-      map.fitBounds(bounds);
-      
-      // Set a minimum zoom level
-      const listener = window.google.maps.event.addListener(map, "idle", () => {
-        if (map.getZoom() > 12) {
-          map.setZoom(12);
+          
+          const bounds = new window.google.maps.LatLngBounds();
+          const infoWindow = new window.google.maps.InfoWindow();
+          
+          // Add markers for each user with coordinates
+          let markersAdded = 0;
+          
+          users.forEach(user => {
+            if (user.coordinates) {
+              const [lng, lat] = user.coordinates;
+              const position = { lat, lng };
+              
+              // Extend bounds to include this point
+              bounds.extend(position);
+              
+              // Create marker element
+              const pinElement = new PinElement({
+                background: "#9b87f5",
+                borderColor: "#7E69AB",
+                glyphColor: "#FFFFFF",
+              });
+              
+              // Create the marker
+              const marker = new AdvancedMarkerElement({
+                map,
+                position,
+                title: user.name,
+                content: pinElement.element,
+              });
+              
+              markersAdded++;
+              
+              // Create popup content
+              const content = `
+                <div style="padding: 12px;">
+                  <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <img src="${user.avatarUrl || 'https://i.pravatar.cc/40'}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 12px;" />
+                    <div>
+                      <h3 style="font-weight: bold; margin: 0;">${user.name}</h3>
+                      <p style="font-size: 14px; color: #666; margin: 0;">${user.role}</p>
+                    </div>
+                  </div>
+                  ${user.organization ? `<p style="font-size: 14px; color: #666; margin: 0;">${user.organization}</p>` : ''}
+                  <p style="font-size: 14px; color: #666; margin: 0;">${user.location}</p>
+                </div>
+              `;
+              
+              // Add click listener for the popup
+              marker.addEventListener("click", () => {
+                infoWindow.setContent(content);
+                infoWindow.open({
+                  anchor: marker,
+                  map,
+                });
+              });
+            }
+          });
+          
+          // Fit map to show all markers
+          if (!bounds.isEmpty()) {
+            map.fitBounds(bounds);
+            
+            // Set a minimum zoom level
+            const listener = google.maps.event.addListener(map, "idle", () => {
+              if (map.getZoom() > 12) {
+                map.setZoom(12);
+              }
+              google.maps.event.removeListener(listener);
+            });
+          }
+          
+          // Notification that map is loaded
+          setMapLoaded(true);
+          if (markersAdded > 0) {
+            toast({
+              title: "Map loaded",
+              description: `Showing ${markersAdded} team members across ${Object.keys(locationGroups).length} locations`,
+            });
+          } else {
+            toast({
+              variant: "destructive",
+              title: "No team members to display",
+              description: "No team members have location data to display on the map",
+            });
+          }
+        } catch (err) {
+          console.error("Error initializing map:", err);
+          setError(`Error initializing map: ${err instanceof Error ? err.message : String(err)}`);
+          setMapLoaded(false);
         }
-        window.google.maps.event.removeListener(listener);
-      });
+      };
+      
+      // Start loading the map
+      window.initMap();
+      
+    } catch (err) {
+      console.error("Error setting up map:", err);
+      setError(`Error setting up map: ${err instanceof Error ? err.message : String(err)}`);
+      setMapLoaded(false);
     }
     
-    // Notification that map is loaded
-    if (markers.length > 0) {
-      toast({
-        title: "Map loaded",
-        description: `Showing ${markers.length} team members across ${Object.keys(locationGroups).length} locations`,
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "No team members to display",
-        description: "No team members have location data to display on the map",
-      });
-    }
-  };
-  
-  // Function to handle API key change
-  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setApiKey(e.target.value);
-    setMapLoaded(false);
-    setScriptLoaded(false);
-    setError(null);
-  };
+    // Cleanup function
+    return () => {
+      delete window.initMap;
+    };
+  }, [apiKey, users, locationGroups]);
 
   return (
     <Card className="w-full">
@@ -207,7 +183,7 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
             id="google-maps-key"
             type="text"
             value={apiKey}
-            onChange={handleApiKeyChange}
+            onChange={(e) => setApiKey(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md text-sm"
             placeholder="Enter your Google Maps API key"
           />
@@ -230,7 +206,7 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
                 <Info className="h-12 w-12 mx-auto text-gray-400 mb-2" />
                 <p className="text-gray-500 mb-2">Enter a Google Maps API key to view the map</p>
                 <p className="text-xs text-gray-400">
-                  Replace "YOUR_API_KEY" with your actual Google Maps API key
+                  You need to provide a valid Google Maps API key to view the map
                 </p>
               </div>
             </div>
@@ -245,7 +221,7 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
             </div>
           )}
           
-          <div ref={mapContainer} className="absolute inset-0" />
+          <div ref={mapContainer} className="absolute inset-0" id="map" />
         </div>
         
         <div className="mt-4 flex flex-wrap gap-2">
