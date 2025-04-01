@@ -11,7 +11,7 @@ export const mockDashboards: Dashboard[] = [
     isDefault: true,
     createdAt: '2023-01-20T10:00:00Z',
     updatedAt: '2023-06-15T14:30:00Z',
-    widgets: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    widgets: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
   },
   {
     id: '2',
@@ -20,7 +20,7 @@ export const mockDashboards: Dashboard[] = [
     isDefault: false,
     createdAt: '2023-02-10T11:20:00Z',
     updatedAt: '2023-06-01T09:45:00Z',
-    widgets: ['1', '2', '6', '7', '8'],
+    widgets: ['1', '2', '7', '9', '6', '11'],
   },
   {
     id: '3',
@@ -29,7 +29,7 @@ export const mockDashboards: Dashboard[] = [
     isDefault: false,
     createdAt: '2023-03-05T15:30:00Z',
     updatedAt: '2023-05-20T16:15:00Z',
-    widgets: ['3', '5', '6', '7'],
+    widgets: ['3', '8', '10', '12', '9', '11'],
   },
 ];
 

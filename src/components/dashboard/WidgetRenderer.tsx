@@ -24,6 +24,18 @@ const WidgetRenderer = (widget: DashboardWidget): React.ReactNode => {
       );
       
     case 'chart':
+      if (widget.chartDataWithCategory && widget.chartDataWithCategory.length > 0) {
+        return (
+          <ChartCard
+            key={widget.id}
+            title={widget.title}
+            chartType={widget.chartType || 'bar'}
+            data={widget.chartDataWithCategory}
+            color={widget.color}
+            multiSeries={true}
+          />
+        );
+      }
       return (
         <ChartCard
           key={widget.id}

@@ -33,6 +33,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ widgets, renderWidg
           startIndex={2} 
           endIndex={4} 
         />
+
+        {/* Charts Row - Third Row (Added for impact form fields) */}
+        <ChartsRow 
+          widgets={widgets} 
+          renderWidget={renderWidget}
+          startIndex={4} 
+          endIndex={6} 
+        />
         
         {/* Activity and Leaderboard Row */}
         <ActivityLeaderboardRow widgets={widgets} renderWidget={renderWidget} />

@@ -164,6 +164,11 @@ const ImpactHistory: React.FC = () => {
           ? { 
               ...activity, 
               ...values, 
+              type: values.type,
+              title: values.title,
+              description: values.description,
+              impact: values.impact,
+              points: values.points,
               date: activity.date,
               userId: activity.userId,
               id: activity.id
@@ -180,7 +185,13 @@ const ImpactHistory: React.FC = () => {
         id: `${Date.now()}`,
         userId: "1",
         date: new Date().toISOString(),
-        ...values
+        type: values.type,
+        title: values.title,
+        description: values.description, 
+        impact: values.impact,
+        points: values.points,
+        hours: values.hours,
+        amountRaised: values.amountRaised
       };
       setActivities([newActivity, ...activities]);
       toast({

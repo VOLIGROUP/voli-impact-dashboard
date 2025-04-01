@@ -1,5 +1,13 @@
 
 import { DashboardWidget } from '../types/dashboard';
+import { groupActivitiesByMonth, getActivitiesByType, calculateHoursByType, calculateAmountsByType } from './activityAnalytics';
+import { mockActivities } from './mockActivities';
+
+// Prepare activity data for charts
+const activityTypeDistribution = getActivitiesByType(mockActivities);
+const hoursByType = calculateHoursByType(mockActivities);
+const amountsByType = calculateAmountsByType(mockActivities);
+const activitiesByMonth = groupActivitiesByMonth(mockActivities);
 
 // Mock Dashboard Widgets
 export const mockWidgets: DashboardWidget[] = [
@@ -7,7 +15,7 @@ export const mockWidgets: DashboardWidget[] = [
     id: '1',
     type: 'metric',
     title: 'Total Volunteering Hours',
-    value: 1240,
+    value: mockActivities.reduce((sum, activity) => sum + (activity.hours || 0), 0),
     change: 12.5,
     period: 'This Month',
     color: 'voli-primary',
@@ -17,7 +25,8 @@ export const mockWidgets: DashboardWidget[] = [
     id: '2',
     type: 'metric',
     title: 'Average Hours per Volunteer',
-    value: 18.5,
+    value: parseFloat((mockActivities.reduce((sum, activity) => sum + (activity.hours || 0), 0) / 
+      (mockActivities.filter(a => a.type === 'volunteer').length || 1)).toFixed(1)),
     suffix: ' hrs',
     change: 5.2,
     period: 'This Month',
@@ -27,20 +36,20 @@ export const mockWidgets: DashboardWidget[] = [
   {
     id: '3',
     type: 'metric',
-    title: 'Blood Donations',
-    value: 67,
-    suffix: ' units',
+    title: 'Total Funds Raised',
+    value: mockActivities.reduce((sum, activity) => sum + (activity.amountRaised || 0), 0),
+    prefix: '$',
     change: 8.4,
     period: 'This Month',
     color: 'red-500',
-    icon: 'droplet',
+    icon: 'heart',
   },
   {
     id: '4',
     type: 'metric',
-    title: 'Item Donations',
-    value: 872,
-    suffix: ' items',
+    title: 'Total Impact Points',
+    value: mockActivities.reduce((sum, activity) => sum + activity.points, 0),
+    suffix: ' pts',
     change: 4.8,
     period: 'This Month',
     color: 'purple-500',
@@ -50,13 +59,12 @@ export const mockWidgets: DashboardWidget[] = [
     id: '5',
     type: 'chart',
     chartType: 'bar',
-    title: 'Volunteering by Cause',
+    title: 'Activities by Type',
     chartData: [
-      { name: 'Community', value: 435 },
-      { name: 'Environment', value: 325 },
-      { name: 'Education', value: 280 },
-      { name: 'Health', value: 175 },
-      { name: 'Crisis', value: 25 },
+      { name: 'Volunteer', value: activityTypeDistribution.volunteer || 0 },
+      { name: 'Fundraising', value: activityTypeDistribution.fundraising || 0 },
+      { name: 'Learning', value: activityTypeDistribution.learning || 0 },
+      { name: 'Other', value: activityTypeDistribution.other || 0 },
     ],
     color: 'blue-500',
   },
@@ -64,27 +72,23 @@ export const mockWidgets: DashboardWidget[] = [
     id: '6',
     type: 'chart',
     chartType: 'line',
-    title: 'Monthly Impact Trend',
-    chartData: [
-      { name: 'Jan', value: 180 },
-      { name: 'Feb', value: 210 },
-      { name: 'Mar', value: 240 },
-      { name: 'Apr', value: 280 },
-      { name: 'May', value: 320 },
-      { name: 'Jun', value: 390 },
-    ],
+    title: 'Monthly Impact Points Trend',
+    chartDataWithCategory: activitiesByMonth.map(item => ({
+      name: item.month,
+      value: item.points,
+      category: 'Points'
+    })),
     color: 'voli-primary',
   },
   {
     id: '7',
     type: 'chart',
     chartType: 'pie',
-    title: 'Impact Types Distribution',
+    title: 'Volunteer Hours by Activity Type',
     chartData: [
-      { name: 'Volunteer Hours', value: 64 },
-      { name: 'Blood Donation', value: 12 },
-      { name: 'Item Donation', value: 18 },
-      { name: 'Fundraising', value: 6 },
+      { name: 'Volunteer', value: hoursByType.volunteer || 0 },
+      { name: 'Learning', value: hoursByType.learning || 0 },
+      { name: 'Other', value: hoursByType.other || 0 },
     ],
     color: 'green-500',
   },
@@ -92,17 +96,51 @@ export const mockWidgets: DashboardWidget[] = [
     id: '8',
     type: 'chart',
     chartType: 'area',
-    title: 'Quarterly Donation Growth',
+    title: 'Fundraising Amount by Type',
     chartData: [
-      { name: 'Q1', value: 120 },
-      { name: 'Q2', value: 240 },
-      { name: 'Q3', value: 180 },
-      { name: 'Q4', value: 320 },
+      { name: 'Fundraising', value: amountsByType.fundraising || 0 },
+      { name: 'Other', value: amountsByType.other || 0 },
     ],
     color: 'orange-500',
   },
   {
     id: '9',
+    type: 'chart',
+    chartType: 'line',
+    title: 'Monthly Activities Trend',
+    chartDataWithCategory: [
+      ...activitiesByMonth.map(item => ({
+        name: item.month,
+        value: item.hours || 0,
+        category: 'Hours'
+      })),
+      ...activitiesByMonth.map(item => ({
+        name: item.month,
+        value: item.amounts || 0,
+        category: 'Amounts ($)'
+      }))
+    ],
+    color: 'purple-500',
+  },
+  {
+    id: '10',
+    type: 'chart',
+    chartType: 'bar',
+    title: 'Impact Distribution',
+    chartDataWithCategory: [
+      { name: 'Community', value: 35, category: 'Hours' },
+      { name: 'Environment', value: 28, category: 'Hours' },
+      { name: 'Education', value: 22, category: 'Hours' },
+      { name: 'Health', value: 15, category: 'Hours' },
+      { name: 'Community', value: 1200, category: 'Funds ($)' },
+      { name: 'Environment', value: 800, category: 'Funds ($)' },
+      { name: 'Education', value: 600, category: 'Funds ($)' },
+      { name: 'Health', value: 400, category: 'Funds ($)' },
+    ],
+    color: 'blue-400',
+  },
+  {
+    id: '11',
     type: 'activity',
     title: 'Recent Impact Activities',
     activities: [
@@ -113,7 +151,7 @@ export const mockWidgets: DashboardWidget[] = [
     ],
   },
   {
-    id: '10',
+    id: '12',
     type: 'leaderboard',
     title: 'Top Impact Contributors',
     leaderboardData: [

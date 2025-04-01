@@ -17,6 +17,7 @@ export interface DashboardWidget {
   // For chart widgets
   chartType?: 'bar' | 'line' | 'pie' | 'area';
   chartData?: Array<{ name: string; value: number }>;
+  chartDataWithCategory?: Array<{ name: string; value: number; category: string }>;
   
   // For activity widgets
   activities?: Array<{ id: string; user: string; action: string; time: string }>;
