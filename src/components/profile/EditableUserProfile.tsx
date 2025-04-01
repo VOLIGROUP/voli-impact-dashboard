@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User } from '@/types/auth';
 import { Activity, Kudos, Interest, Skill, UserRanking } from '@/types/dashboard';
@@ -21,6 +20,7 @@ import { Award, BarChart3, Heart, Calendar, Star, User as UserIcon,
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
 import html2canvas from 'html2canvas';
+import { Checkbox } from "@/components/ui/checkbox";
 
 // SDG options
 const sdgOptions = [

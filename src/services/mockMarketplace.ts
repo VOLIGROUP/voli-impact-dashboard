@@ -1,4 +1,119 @@
-import { Marketplace } from '../types/dashboard';
+
+import { Marketplace, ImpactCategory, Charity } from '../types/dashboard';
+
+// Mock Impact Categories (SDGs)
+export const mockImpactCategories: ImpactCategory[] = [
+  {
+    id: 'sdg1',
+    name: 'No Poverty',
+    description: 'End poverty in all its forms everywhere',
+    icon: 'dollar-sign',
+    color: '#E5243B'
+  },
+  {
+    id: 'sdg2',
+    name: 'Zero Hunger',
+    description: 'End hunger, achieve food security and improved nutrition',
+    icon: 'utensils',
+    color: '#DDA83A'
+  },
+  {
+    id: 'sdg3',
+    name: 'Good Health',
+    description: 'Ensure healthy lives and promote well-being for all at all ages',
+    icon: 'heart',
+    color: '#4C9F38'
+  },
+  {
+    id: 'sdg4',
+    name: 'Quality Education',
+    description: 'Ensure inclusive and equitable quality education',
+    icon: 'book',
+    color: '#C5192D'
+  },
+  {
+    id: 'sdg5',
+    name: 'Gender Equality',
+    description: 'Achieve gender equality and empower all women and girls',
+    icon: 'user',
+    color: '#FF3A21'
+  },
+  {
+    id: 'sdg6',
+    name: 'Clean Water',
+    description: 'Ensure availability and sustainable management of water and sanitation',
+    icon: 'droplet',
+    color: '#26BDE2'
+  },
+  {
+    id: 'sdg7',
+    name: 'Clean Energy',
+    description: 'Ensure access to affordable, reliable, sustainable and modern energy',
+    icon: 'zap',
+    color: '#FCC30B'
+  },
+  {
+    id: 'sdg8',
+    name: 'Decent Work',
+    description: 'Promote sustained, inclusive and sustainable economic growth',
+    icon: 'briefcase',
+    color: '#A21942'
+  },
+  {
+    id: 'sdg9',
+    name: 'Industry & Innovation',
+    description: 'Build resilient infrastructure and foster innovation',
+    icon: 'tool',
+    color: '#FD6925'
+  },
+  {
+    id: 'sdg10',
+    name: 'Reduced Inequalities',
+    description: 'Reduce inequality within and among countries',
+    icon: 'users',
+    color: '#DD1367'
+  }
+];
+
+// Mock Charities
+export const mockCharities: Charity[] = [
+  {
+    id: 'charity-1',
+    name: 'Global Water Initiative',
+    logo: '/placeholder.svg',
+    mission: 'Ensuring clean water access to communities around the world by building wells and water purification systems.',
+    sdgs: ['sdg6', 'sdg3'],
+    website: 'https://example.org/water',
+    sdgFocus: ['sdg6', 'sdg3', 'sdg1']
+  },
+  {
+    id: 'charity-2',
+    name: 'Feeding Futures',
+    logo: '/placeholder.svg',
+    mission: 'Working to end hunger through sustainable farming, food distribution, and education about nutrition.',
+    sdgs: ['sdg2', 'sdg1', 'sdg4'],
+    website: 'https://example.org/feeding',
+    sdgFocus: ['sdg2', 'sdg1', 'sdg4']
+  },
+  {
+    id: 'charity-3',
+    name: 'EcoAction Alliance',
+    logo: '/placeholder.svg',
+    mission: 'Protecting natural habitats, reducing pollution, and fighting climate change through direct action and advocacy.',
+    sdgs: ['sdg13', 'sdg14', 'sdg15'],
+    website: 'https://example.org/eco',
+    sdgFocus: ['sdg13', 'sdg14', 'sdg15']
+  },
+  {
+    id: 'charity-4',
+    name: 'Education for All',
+    logo: '/placeholder.svg',
+    mission: 'Building schools, training teachers, and providing educational resources to underserved communities worldwide.',
+    sdgs: ['sdg4', 'sdg5', 'sdg10'],
+    website: 'https://example.org/education',
+    sdgFocus: ['sdg4', 'sdg5', 'sdg10']
+  }
+];
 
 // Mock Marketplace Items
 export const mockMarketplaceItems: Marketplace[] = [
@@ -154,8 +269,18 @@ export const getMarketplaceItemById = (id: string) => {
   return mockMarketplaceItems.find(item => item.id === id);
 };
 
-export const getSDGsForMarketplaceItem = (item: Marketplace) => {
-  return item.sdgGoals || [];
+export const getImpactCategoryById = (id: string) => {
+  return mockImpactCategories.find(category => category.id === id);
+};
+
+export const getSDGsForMarketplaceItem = (itemId: string) => {
+  const item = getMarketplaceItemById(itemId);
+  if (!item || !item.sdgGoals) return [];
+  
+  return item.sdgGoals.map(sdgId => {
+    const category = mockImpactCategories.find(c => c.id === sdgId);
+    return category || { id: sdgId, name: "Unknown SDG", color: "#999999", description: "", icon: "" };
+  });
 };
 
 export const mockMarketplace = mockMarketplaceItems;

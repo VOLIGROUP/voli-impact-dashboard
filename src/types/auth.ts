@@ -1,4 +1,15 @@
 
+export interface Skill {
+  id: string;
+  name: string;
+  level: number;
+}
+
+export interface Interest {
+  id: string;
+  name: string;
+}
+
 export interface User {
   id: string;
   email: string;

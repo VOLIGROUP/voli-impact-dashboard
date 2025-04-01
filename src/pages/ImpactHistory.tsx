@@ -57,7 +57,7 @@ const ImpactHistory: React.FC = () => {
   
   const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters."),
-    type: z.enum(["volunteer", "fundraising", "learning", "other"], {
+    type: z.enum(["volunteer", "fundraising", "learning", "other", "donation", "event"], {
       required_error: "Please select an activity type.",
     }),
     description: z.string().min(5, "Description must be at least 5 characters."),
@@ -255,6 +255,8 @@ const ImpactHistory: React.FC = () => {
                 <SelectItem value="fundraising">Fundraising</SelectItem>
                 <SelectItem value="learning">Learning</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="donation">Donation</SelectItem>
+                <SelectItem value="event">Event</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -371,6 +373,8 @@ const ImpactHistory: React.FC = () => {
                         <SelectItem value="fundraising">Fundraising</SelectItem>
                         <SelectItem value="learning">Learning</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="donation">Donation</SelectItem>
+                        <SelectItem value="event">Event</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
