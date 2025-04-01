@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -16,6 +17,12 @@ import {
   DialogTitle,
   DialogClose
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 
 interface MarketplaceCardProps {
@@ -185,30 +192,46 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
         </CardContent>
         
         <CardFooter className="px-4 py-3 border-t border-gray-100 flex justify-between">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-5/12"
-            onClick={handleSaveClick}
-            disabled={readOnly}
-          >
-            <Heart className="h-4 w-4 mr-2" />
-            Save
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-9 w-9"
+                  onClick={handleSaveClick}
+                  disabled={readOnly}
+                >
+                  <Heart className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Save to favorites</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  className="h-9 w-9"
+                  onClick={handleShareClick}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Share this opportunity</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           <Button 
-            variant="outline" 
             size="sm" 
-            className="w-5/12"
-            onClick={handleShareClick}
-          >
-            <Share2 className="h-4 w-4 mr-2" />
-            Share
-          </Button>
-          
-          <Button 
-            size="sm" 
-            className="w-full mt-2 bg-voli-primary hover:bg-voli-secondary text-black"
+            className="flex-1 ml-2 bg-voli-primary hover:bg-voli-secondary text-black"
             onClick={handleActionClick}
           >
             {item.type === 'volunteer' ? 'Sign Up' : 'Donate'}
