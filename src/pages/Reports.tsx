@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { mockReportTemplates, mockReports, getReportTemplateById } from '../services/mockReports';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, FileText, Download, Clock, Check, Eye } from 'lucide-react';
+import { PlusCircle, FileText, Download, Clock, Check, Eye, ImageIcon } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +26,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import SocialMediaTileGenerator from '@/components/reports/SocialMediaTileGenerator';
 
 const Reports: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('templates');
@@ -67,7 +67,6 @@ const Reports: React.FC = () => {
       return;
     }
 
-    // In a real app, this would create a new report in the database
     toast({
       title: "Success!",
       description: `Report "${newReportName}" is being generated`,
@@ -75,7 +74,6 @@ const Reports: React.FC = () => {
 
     setIsNewReportDialogOpen(false);
     
-    // Simulate report generation and switch to reports tab
     setTimeout(() => {
       setActiveTab('reports');
       toast({
@@ -98,8 +96,6 @@ const Reports: React.FC = () => {
     switch (action) {
       case 'view':
       case 'edit':
-        // For view/edit, we would open the report in the appropriate mode
-        // For now, just simulate with a toast message
         const template = getReportTemplateById(report?.templateId || "");
         if (template) {
           setPreviewTemplate(template);
@@ -116,12 +112,10 @@ const Reports: React.FC = () => {
           title: "Downloading",
           description: `Downloading "${report?.name}"`,
         });
-        // In a real app, this would trigger a file download
         break;
     }
   };
 
-  // Function to render mock data for a report section
   const renderMockDataForSection = (section: string) => {
     switch (section) {
       case 'Governance':
@@ -201,23 +195,34 @@ const Reports: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
             <p className="text-gray-500">
-              Generate and manage your impact reports
+              Generate and manage your impact reports and social media assets
             </p>
           </div>
           
-          <Button 
-            className="bg-voli-primary hover:bg-voli-secondary text-black"
-            onClick={handleNewReportClick}
-          >
-            <PlusCircle className="h-4 w-4 mr-2" />
-            New Report
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setActiveTab('social-media')}
+              className="gap-2"
+            >
+              <ImageIcon className="h-4 w-4" />
+              Social Media
+            </Button>
+            <Button 
+              className="bg-voli-primary hover:bg-voli-secondary text-black"
+              onClick={handleNewReportClick}
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              New Report
+            </Button>
+          </div>
         </div>
         
         <Tabs defaultValue="templates" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-[400px] grid-cols-2">
+          <TabsList className="grid w-[600px] grid-cols-3">
             <TabsTrigger value="templates">Report Templates</TabsTrigger>
             <TabsTrigger value="reports">Generated Reports</TabsTrigger>
+            <TabsTrigger value="social-media">Social Media</TabsTrigger>
           </TabsList>
           
           <TabsContent value="templates" className="space-y-6">
@@ -333,10 +338,13 @@ const Reports: React.FC = () => {
               })}
             </div>
           </TabsContent>
+          
+          <TabsContent value="social-media" className="space-y-6">
+            <SocialMediaTileGenerator />
+          </TabsContent>
         </Tabs>
       </div>
 
-      {/* New Report Dialog */}
       <Dialog open={isNewReportDialogOpen} onOpenChange={setIsNewReportDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -378,7 +386,6 @@ const Reports: React.FC = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Preview Report Dialog */}
       <Dialog open={isPreviewDialogOpen} onOpenChange={setIsPreviewDialogOpen}>
         <DialogContent className="max-w-3xl h-[80vh] block">
           <DialogHeader>
