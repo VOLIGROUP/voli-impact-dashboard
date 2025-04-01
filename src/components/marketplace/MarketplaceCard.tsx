@@ -242,7 +242,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
 
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
         <DialogContent className="sm:max-w-md p-5">
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-3">
             <DialogTitle className="text-xl font-semibold">Share This Opportunity</DialogTitle>
             <DialogClose className="h-4 w-4 rounded-sm opacity-70 ring-offset-background hover:opacity-100 focus:outline-none">
               <X className="h-4 w-4" />
@@ -250,36 +250,51 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
             </DialogClose>
           </div>
           
-          <DialogDescription className="mt-0 mb-3">
-            Share this {item.type === 'volunteer' ? 'volunteer opportunity' : 'fundraising campaign'} with others.
-          </DialogDescription>
-          
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex-1 border rounded-md p-2 bg-gray-50 overflow-hidden">
-              <div className="text-sm text-ellipsis overflow-hidden whitespace-nowrap">
-                {generateShareLink()}
+          <div className="mb-4">
+            <div className="flex items-start gap-3 mb-3">
+              <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0">
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-base mb-1 line-clamp-1">{item.title}</h4>
+                <p className="text-sm text-gray-600 mb-1">{item.organization}</p>
+                <div className="flex items-center text-xs text-gray-500">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  <span>{item.location}</span>
+                </div>
+                {item.type === 'volunteer' && (
+                  <Badge className="mt-2 text-xs bg-blue-100 text-blue-800">Volunteer</Badge>
+                )}
+                {item.type === 'fundraising' && (
+                  <Badge className="mt-2 text-xs bg-purple-100 text-purple-800">Fundraising</Badge>
+                )}
               </div>
             </div>
-            <Button 
-              type="button" 
-              className="bg-[#d4ff39] hover:bg-[#bce535] text-black h-10 px-3 flex items-center gap-1 whitespace-nowrap"
-              onClick={copyToClipboard}
-            >
-              {copied ? 'Copied!' : 'Copy'}
-              {!copied && <Copy className="h-4 w-4" />}
-            </Button>
           </div>
           
-          <div className="flex justify-start">
+          <div className="flex justify-between items-center gap-3">
             <DialogClose asChild>
               <Button 
                 type="button" 
                 variant="outline"
-                className="px-4"
+                className="px-4 flex-1"
               >
                 Close
               </Button>
             </DialogClose>
+            
+            <Button 
+              type="button" 
+              className="bg-[#d4ff39] hover:bg-[#bce535] text-black flex-1 flex items-center justify-center gap-1"
+              onClick={copyToClipboard}
+            >
+              {copied ? 'Copied!' : 'Copy Link'}
+              {!copied && <Copy className="h-4 w-4" />}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
