@@ -1,11 +1,9 @@
 
-export type UserRole = 'admin' | 'user';
-
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: UserRole;
+  role: string;
   avatarUrl?: string;
   organization?: string;
   organizationId?: string;
@@ -15,14 +13,15 @@ export interface User {
   level: number;
   joinedAt: string;
   lastActive: string;
+  location?: string;
+  coordinates?: [number, number]; // [longitude, latitude]
 }
 
 export interface AuthContextType {
   user: User | null;
-  isLoading: boolean;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (email: string, password: string, name: string) => Promise<void>;
-  updateUserProfile: (userData: Partial<User>) => Promise<User>;
 }
