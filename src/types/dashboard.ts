@@ -1,11 +1,10 @@
-
 export interface Activity {
   id: string;
   userId: string;
   title: string;
   description: string;
   date: string;
-  type: 'volunteer' | 'fundraising' | 'learning' | 'other';
+  type: 'volunteer' | 'fundraising' | 'learning' | 'other' | 'donation' | 'event';
   points: number;
   impact: string;
   hours?: number;
