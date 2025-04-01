@@ -1,64 +1,41 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-interface WelcomeCardProps {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  to: string;
-  buttonText: string;
-  variant?: 'default' | 'admin' | 'user';
-  onClick?: () => void;
+export interface WelcomeCardProps {
+  title?: string;
+  description?: string;
+  icon?: React.ReactNode;
+  to?: string;
+  buttonText?: string;
 }
 
 const WelcomeCard: React.FC<WelcomeCardProps> = ({ 
-  title, 
-  description, 
+  title = "Welcome to Voli", 
+  description = "Start measuring and tracking your impact today", 
   icon, 
-  to, 
-  buttonText,
-  variant = 'default',
-  onClick
+  to = "/dashboard", 
+  buttonText = "Get Started" 
 }) => {
-  const getBgColor = () => {
-    switch (variant) {
-      case 'admin':
-        return 'bg-gradient-to-br from-sky-100 to-blue-100 border-sky-200';
-      case 'user':
-        return 'bg-gradient-to-br from-green-100 to-emerald-100 border-green-200';
-      default:
-        return 'bg-gradient-to-br from-gray-50 to-gray-100';
-    }
-  };
-
-  const handleClick = (e: React.MouseEvent) => {
-    if (onClick) {
-      e.preventDefault();
-      onClick();
-    }
-  };
-
   return (
-    <Card className={`transition-all duration-300 hover:shadow-md ${getBgColor()}`}>
-      <CardHeader className="pb-2">
-        <div className="mb-2 text-primary">{icon}</div>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-      </CardContent>
-      <CardFooter>
-        <Button asChild className="w-full gap-2 justify-between">
-          <Link to={to} onClick={handleClick}>
+    <Card className="border-2 border-voli-primary/20">
+      <CardContent className="p-6 space-y-4">
+        <div className="flex flex-col items-center text-center space-y-2">
+          {icon && <div className="text-voli-primary">{icon}</div>}
+          <h3 className="text-xl font-bold">{title}</h3>
+          <p className="text-gray-500">{description}</p>
+        </div>
+        
+        <Button asChild className="w-full bg-voli-primary hover:bg-voli-secondary text-black">
+          <Link to={to}>
             {buttonText}
-            <ArrowRight size={16} />
+            <ChevronRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 };
