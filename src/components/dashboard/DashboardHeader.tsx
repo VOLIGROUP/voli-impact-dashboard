@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Settings2, Clock } from 'lucide-react';
+import { PlusCircle, Settings2, Clock, MapPin } from 'lucide-react';
 import { User } from '@/types/auth';
 import { Dashboard } from '@/types/dashboard';
 
@@ -15,6 +15,7 @@ interface DashboardHeaderProps {
   onOpenNewDashboardDialog: () => void;
   onAddWidget: () => void;
   hasWidgets: boolean;
+  onOpenMapDialog: () => void;
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
@@ -25,7 +26,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onOpenImpactDialog,
   onOpenNewDashboardDialog,
   onAddWidget,
-  hasWidgets
+  hasWidgets,
+  onOpenMapDialog
 }) => {
   return (
     <div className="flex items-center justify-between">
@@ -52,6 +54,15 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             ))}
           </SelectContent>
         </Select>
+        
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={onOpenMapDialog}
+          title="View Global Impact Heatmap"
+        >
+          <MapPin className="h-4 w-4" />
+        </Button>
         
         <Button variant="outline" size="icon">
           <Settings2 className="h-4 w-4" />

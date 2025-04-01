@@ -12,7 +12,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 75,
     impact: 'Removed 250kg of plastic waste from local beaches',
-    hours: 5
+    hours: 5,
+    location: 'Melbourne, Australia',
+    coordinates: [144.9631, -37.8136]
   },
   {
     id: 'act2',
@@ -23,7 +25,9 @@ export const mockActivities: Activity[] = [
     type: 'donation',
     points: 100,
     impact: 'Raised funds for reforestation projects',
-    amountRaised: 3500
+    amountRaised: 3500,
+    location: 'Sydney, Australia',
+    coordinates: [151.2093, -33.8688]
   },
   {
     id: 'act3',
@@ -34,7 +38,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 60,
     impact: 'Helped students develop professional skills and career paths',
-    hours: 12
+    hours: 12,
+    location: 'San Francisco, USA',
+    coordinates: [-122.4194, 37.7749]
   },
   {
     id: 'act4',
@@ -45,7 +51,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 50,
     impact: 'Improved digital literacy for 15 nonprofit organizations',
-    hours: 8
+    hours: 8,
+    location: 'Chicago, USA',
+    coordinates: [-87.6298, 41.8781]
   },
   {
     id: 'act5',
@@ -56,7 +64,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 45,
     impact: 'Provided professional design assets valued at $2000',
-    hours: 10
+    hours: 10,
+    location: 'Berlin, Germany',
+    coordinates: [13.4050, 52.5200]
   },
   {
     id: 'act6',
@@ -67,7 +77,9 @@ export const mockActivities: Activity[] = [
     type: 'event',
     points: 80,
     impact: 'Inspired over 200 attendees to adopt sustainable practices',
-    hours: 3
+    hours: 3,
+    location: 'Brisbane, Australia',
+    coordinates: [153.0251, -27.4698]
   },
   {
     id: 'act7',
@@ -78,7 +90,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 70,
     impact: 'Packed 1000+ meal kits for families in need',
-    hours: 6
+    hours: 6,
+    location: 'Los Angeles, USA',
+    coordinates: [-118.2437, 34.0522]
   },
   {
     id: 'act8',
@@ -89,7 +103,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 55,
     impact: 'Improved website accessibility and performance',
-    hours: 15
+    hours: 15,
+    location: 'Seattle, USA',
+    coordinates: [-122.3321, 47.6062]
   },
   // Add more activities for other users
   {
@@ -101,7 +117,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 65,
     impact: 'Created sustainable food source for local community',
-    hours: 20
+    hours: 20,
+    location: 'Barcelona, Spain',
+    coordinates: [2.1734, 41.3851]
   },
   {
     id: 'act10',
@@ -112,7 +130,9 @@ export const mockActivities: Activity[] = [
     type: 'event',
     points: 50,
     impact: 'Educated 75 community members on sustainable practices',
-    hours: 6
+    hours: 6,
+    location: 'Toronto, Canada',
+    coordinates: [-79.3832, 43.6532]
   },
   // Add some activities for New York team members
   {
@@ -124,7 +144,9 @@ export const mockActivities: Activity[] = [
     type: 'event',
     points: 85,
     impact: 'Influenced sustainability policies at 5 major corporations',
-    hours: 8
+    hours: 8,
+    location: 'New York, USA',
+    coordinates: [-74.0059, 40.7128]
   },
   {
     id: 'act12',
@@ -135,7 +157,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 90,
     impact: 'Created 12 new tech solutions for local nonprofits',
-    hours: 24
+    hours: 24,
+    location: 'Boston, USA',
+    coordinates: [-71.0589, 42.3601]
   },
   {
     id: 'act13',
@@ -146,7 +170,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 60,
     impact: 'Increased nonprofit engagement by 35%',
-    hours: 15
+    hours: 15,
+    location: 'Washington D.C., USA',
+    coordinates: [-77.0369, 38.9072]
   },
   // Add some activities for London team members
   {
@@ -158,7 +184,9 @@ export const mockActivities: Activity[] = [
     type: 'event',
     points: 75,
     impact: 'Connected 30+ impact investors with sustainable startups',
-    hours: 12
+    hours: 12,
+    location: 'London, UK',
+    coordinates: [-0.1278, 51.5074]
   },
   {
     id: 'act15',
@@ -169,7 +197,9 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 65,
     impact: 'Improved accessibility for 3 nonprofit websites',
-    hours: 18
+    hours: 18,
+    location: 'Manchester, UK',
+    coordinates: [-2.2426, 53.4808]
   },
   {
     id: 'act16',
@@ -180,7 +210,62 @@ export const mockActivities: Activity[] = [
     type: 'volunteer',
     points: 80,
     impact: 'Removed 300kg of waste from London waterways',
-    hours: 6
+    hours: 6,
+    location: 'London, UK',
+    coordinates: [-0.1278, 51.5074]
+  },
+  // Adding more global activities
+  {
+    id: 'act17',
+    userId: '2',
+    title: 'Reforestation Project',
+    description: 'Planted trees in deforested areas',
+    date: '2023-07-05T09:00:00Z',
+    type: 'volunteer',
+    points: 85,
+    impact: 'Planted 200 native trees to restore local ecosystem',
+    hours: 10,
+    location: 'Amazon Rainforest, Brazil',
+    coordinates: [-60.0237, -3.1190]
+  },
+  {
+    id: 'act18',
+    userId: '8',
+    title: 'Clean Water Initiative',
+    description: 'Installed water filtration systems in rural villages',
+    date: '2023-06-20T10:00:00Z',
+    type: 'volunteer',
+    points: 95,
+    impact: 'Provided clean drinking water to 500+ people',
+    hours: 30,
+    location: 'Nairobi, Kenya',
+    coordinates: [36.8219, -1.2921]
+  },
+  {
+    id: 'act19',
+    userId: '9',
+    title: 'Education Accessibility Program',
+    description: 'Distributed educational materials to underserved schools',
+    date: '2023-08-02T11:00:00Z',
+    type: 'donation',
+    points: 70,
+    impact: 'Supported education for 350 students',
+    amountRaised: 2800,
+    location: 'Mumbai, India',
+    coordinates: [72.8777, 19.0760]
+  },
+  {
+    id: 'act20',
+    userId: '10',
+    title: 'Coral Reef Conservation',
+    description: 'Participated in coral planting and reef cleanup',
+    date: '2023-07-18T08:30:00Z',
+    type: 'volunteer',
+    points: 75,
+    impact: 'Helped restore 100 square meters of coral reef',
+    hours: 15,
+    location: 'Great Barrier Reef, Australia',
+    coordinates: [145.7031, -16.2864]
   }
 ];
 
@@ -192,4 +277,58 @@ export const getUserActivities = (userId: string): Activity[] => {
 // Function to get all activities for reporting
 export const getAllActivities = (): Activity[] => {
   return mockActivities;
+};
+
+// Get activities by location
+export const getActivitiesByLocation = (coordinates: [number, number], radiusInKm: number = 100): Activity[] => {
+  const toRadians = (degree: number) => degree * (Math.PI / 180);
+  
+  return mockActivities.filter(activity => {
+    if (!activity.coordinates) return false;
+    
+    // Calculate distance using Haversine formula
+    const earthRadiusKm = 6371;
+    const dLat = toRadians(activity.coordinates[1] - coordinates[1]);
+    const dLon = toRadians(activity.coordinates[0] - coordinates[0]);
+    
+    const lat1 = toRadians(coordinates[1]);
+    const lat2 = toRadians(activity.coordinates[1]);
+    
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = earthRadiusKm * c;
+    
+    return distance <= radiusInKm;
+  });
+};
+
+// Get heat map data
+export const getHeatMapData = (): Array<[number, number, number]> => {
+  // Group activities by coordinates and count them
+  const locationCounts: Record<string, { coordinates: [number, number], count: number, points: number }> = {};
+  
+  mockActivities.forEach(activity => {
+    if (!activity.coordinates) return;
+    
+    const key = `${activity.coordinates[0]},${activity.coordinates[1]}`;
+    
+    if (!locationCounts[key]) {
+      locationCounts[key] = {
+        coordinates: activity.coordinates,
+        count: 0,
+        points: 0
+      };
+    }
+    
+    locationCounts[key].count += 1;
+    locationCounts[key].points += activity.points;
+  });
+  
+  // Convert to heatmap data format [longitude, latitude, intensity]
+  return Object.values(locationCounts).map(location => [
+    location.coordinates[0],
+    location.coordinates[1],
+    location.points / 10 // Scale down points to get a reasonable intensity
+  ]);
 };

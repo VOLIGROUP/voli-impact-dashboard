@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -15,6 +16,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import CreateDashboardDialog from '@/components/dashboard/CreateDashboardDialog';
 import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
+import MapHeatmapDialog from '@/components/dashboard/MapHeatmapDialog';
 import WidgetWithContextMenu from '@/components/dashboard/WidgetWithContextMenu';
 import { DashboardWidget } from '@/types/dashboard';
 import { toast } from '@/hooks/use-toast';
@@ -31,6 +33,7 @@ const Dashboard: React.FC = () => {
   const [impactDialogOpen, setImpactDialogOpen] = useState(false);
   const [newDashboardDialogOpen, setNewDashboardDialogOpen] = useState(false);
   const [addWidgetDialogOpen, setAddWidgetDialogOpen] = useState(false);
+  const [mapDialogOpen, setMapDialogOpen] = useState(false);
   const [dashboards, setDashboards] = useState(mockDashboards);
   
   const widgetIds = getWidgetsForDashboard(selectedDashboardId);
@@ -130,6 +133,7 @@ const Dashboard: React.FC = () => {
           onOpenNewDashboardDialog={() => setNewDashboardDialogOpen(true)}
           onAddWidget={() => setAddWidgetDialogOpen(true)}
           hasWidgets={widgets.length > 0}
+          onOpenMapDialog={() => setMapDialogOpen(true)}
         />
         
         {selectedDashboard && widgets.length > 0 ? (
@@ -176,6 +180,11 @@ const Dashboard: React.FC = () => {
         open={addWidgetDialogOpen}
         onOpenChange={setAddWidgetDialogOpen}
         onAddWidget={handleAddWidget}
+      />
+      
+      <MapHeatmapDialog
+        open={mapDialogOpen}
+        onOpenChange={setMapDialogOpen}
       />
     </Layout>
   );
