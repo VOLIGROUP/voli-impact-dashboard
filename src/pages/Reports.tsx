@@ -19,22 +19,36 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 
 const Reports: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('templates');
   const [isNewReportDialogOpen, setIsNewReportDialogOpen] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [newReportName, setNewReportName] = useState('');
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
+  const [previewTemplate, setPreviewTemplate] = useState<any>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handlePreviewClick = (templateId: string) => {
     const template = getReportTemplateById(templateId);
+    if (template) {
+      setPreviewTemplate(template);
+      setIsPreviewDialogOpen(true);
+    }
+    
     toast({
       title: "Preview Mode",
       description: `Previewing "${template?.name}" template`,
     });
-    // In a real app, this would open a preview modal or navigate to a preview page
   };
 
   const handleGenerateReportClick = (templateId: string) => {
@@ -84,6 +98,14 @@ const Reports: React.FC = () => {
     switch (action) {
       case 'view':
       case 'edit':
+        // For view/edit, we would open the report in the appropriate mode
+        // For now, just simulate with a toast message
+        const template = getReportTemplateById(report?.templateId || "");
+        if (template) {
+          setPreviewTemplate(template);
+          setIsPreviewDialogOpen(true);
+        }
+        
         toast({
           title: action === 'view' ? "Viewing Report" : "Editing Report",
           description: `${action === 'view' ? 'Opening' : 'Editing'} "${report?.name}"`,
@@ -94,7 +116,81 @@ const Reports: React.FC = () => {
           title: "Downloading",
           description: `Downloading "${report?.name}"`,
         });
+        // In a real app, this would trigger a file download
         break;
+    }
+  };
+
+  // Function to render mock data for a report section
+  const renderMockDataForSection = (section: string) => {
+    switch (section) {
+      case 'Governance':
+      case 'Workers':
+      case 'Community':
+      case 'Environment':
+      case 'Customers':
+        return (
+          <>
+            <h4 className="text-sm font-semibold mb-2 mt-4">{section} Metrics:</h4>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Metric</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead>Change</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Total {section} Score</TableCell>
+                  <TableCell>85 / 100</TableCell>
+                  <TableCell className="text-green-600">↑ 12%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{section} Engagement</TableCell>
+                  <TableCell>High</TableCell>
+                  <TableCell className="text-green-600">↑ 8%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{section} Satisfaction</TableCell>
+                  <TableCell>92%</TableCell>
+                  <TableCell className="text-green-600">↑ 5%</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <p className="text-sm text-gray-600 mt-2">
+              This section shows key metrics related to {section.toLowerCase()} performance and impact.
+              In a complete report, this would include detailed analysis, charts, and recommendations.
+            </p>
+          </>
+        );
+      
+      case 'Executive Summary':
+        return (
+          <>
+            <h4 className="text-sm font-semibold mb-2 mt-4">{section}:</h4>
+            <p className="text-sm text-gray-700">
+              This report summarizes our organization's sustainability efforts for the past year.
+              Overall, we've seen significant improvements across all key metrics, with notable
+              success in reducing our carbon footprint by 15% and increasing community engagement by 22%.
+            </p>
+            <p className="text-sm text-gray-700 mt-2">
+              Our goals for the upcoming year include further reductions in environmental impact and
+              expanding our social responsibility programs to new regions.
+            </p>
+          </>
+        );
+      
+      default:
+        return (
+          <>
+            <h4 className="text-sm font-semibold mb-2 mt-4">{section}:</h4>
+            <p className="text-sm text-gray-700">
+              This section would contain detailed information about {section.toLowerCase()}.
+              In a complete report, you would see metrics, analysis, and visualizations related to this area.
+            </p>
+          </>
+        );
     }
   };
 
@@ -277,6 +373,43 @@ const Reports: React.FC = () => {
             </Button>
             <Button onClick={handleCreateNewReport} className="bg-voli-primary hover:bg-voli-secondary text-black">
               Generate Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Preview Report Dialog */}
+      <Dialog open={isPreviewDialogOpen} onOpenChange={setIsPreviewDialogOpen}>
+        <DialogContent className="max-w-3xl h-[80vh] block">
+          <DialogHeader>
+            <DialogTitle>
+              {previewTemplate?.name || "Report Preview"}
+            </DialogTitle>
+            <DialogDescription>
+              {previewTemplate?.description || "Preview of the report template"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="overflow-y-auto mt-4 pr-2" style={{ maxHeight: "calc(80vh - 180px)" }}>
+            {previewTemplate && (
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                  <h3 className="text-xl font-bold mb-4">{previewTemplate.name}</h3>
+                  <p className="text-gray-700 mb-6">{previewTemplate.description}</p>
+                  
+                  {previewTemplate.sections.map((section: string, index: number) => (
+                    <div key={index} className="mb-6">
+                      {renderMockDataForSection(section)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPreviewDialogOpen(false)}>
+              Close Preview
             </Button>
           </DialogFooter>
         </DialogContent>
