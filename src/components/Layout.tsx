@@ -80,7 +80,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           collapsed ? 'w-16' : 'w-64'
         }`}
       >
-        <div className={`flex items-center justify-center py-6 ${collapsed ? 'px-2' : 'px-6'}`}>
+        <div className={`flex items-center justify-between py-6 ${collapsed ? 'px-2' : 'px-6'}`}>
           {user.companyLogo ? (
             <img 
               src={user.companyLogo} 
@@ -96,6 +96,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               className={`object-contain ${collapsed ? 'h-8' : 'h-10'}`}
             />
           )}
+          
+          {/* Circular collapse button at the top */}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-700 transition-colors"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
         </div>
         
         <div className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -122,15 +132,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <LogOut size={20} />
             </div>
             {!collapsed && <span className="ml-3">Logout</span>}
-          </button>
-          
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="mt-3 w-full flex items-center justify-center py-2 rounded-lg hover:bg-gray-100 text-gray-700"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
         </div>
       </div>
