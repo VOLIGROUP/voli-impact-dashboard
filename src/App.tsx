@@ -3,8 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import React from "react";
 
 // Pages
 import Login from "./pages/Login";
@@ -17,6 +18,7 @@ import Achievements from "./pages/Achievements";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Welcome from "./pages/Welcome";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +35,7 @@ const ProtectedRoute = ({ children }) => {
   }
   
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Index />;
   }
   
   return children;
@@ -48,7 +50,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
