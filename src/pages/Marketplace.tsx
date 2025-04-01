@@ -1,20 +1,56 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockMarketplace, mockImpactCategories } from '../services/mockData';
+import { scrapeVolunteerOpportunities } from '../services/VolunteerScraperService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, MapPin, Calendar, Users, DollarSign, Clock, Heart } from 'lucide-react';
+import { Search, MapPin, Calendar, Users, DollarSign, Clock, Heart, RefreshCw } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
+import { Marketplace as MarketplaceType } from '../types/dashboard';
+import { useToast } from "@/hooks/use-toast";
 
 const Marketplace: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceType[]>(mockMarketplace);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   
-  const filteredItems = mockMarketplace.filter(item => {
+  // Function to load scraped volunteer opportunities
+  const loadScrapedOpportunities = async () => {
+    setIsLoading(true);
+    try {
+      const scrapedItems = await scrapeVolunteerOpportunities();
+      // Merge with existing fundraising items
+      const fundraisingItems = marketplaceItems.filter(item => item.type === 'fundraising');
+      setMarketplaceItems([...scrapedItems, ...fundraisingItems]);
+      toast({
+        title: "Success",
+        description: `Loaded ${scrapedItems.length} recent volunteer opportunities`,
+      });
+    } catch (error) {
+      console.error('Error scraping volunteer opportunities:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load volunteer opportunities",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Load scraped opportunities on initial load
+  useEffect(() => {
+    loadScrapedOpportunities();
+  }, []);
+  
+  const filteredItems = marketplaceItems.filter(item => {
     const matchesSearch = 
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,8 +86,22 @@ const Marketplace: React.FC = () => {
               />
             </div>
             
-            <Button className="bg-voli-primary hover:bg-voli-secondary text-black whitespace-nowrap">
-              Create Opportunity
+            <Button 
+              className="bg-voli-primary hover:bg-voli-secondary text-black whitespace-nowrap"
+              onClick={loadScrapedOpportunities}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh Listings
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -86,25 +136,43 @@ const Marketplace: React.FC = () => {
           
           <TabsContent value="all" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <MarketplaceCard key={item.id} item={item} />
-              ))}
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
+                  <MarketplaceCard key={item.id} item={item} />
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-12">
+                  <p className="text-gray-500">No opportunities found. Try adjusting your filters.</p>
+                </div>
+              )}
             </div>
           </TabsContent>
           
           <TabsContent value="volunteer" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {volunteerItems.map((item) => (
-                <MarketplaceCard key={item.id} item={item} />
-              ))}
+              {volunteerItems.length > 0 ? (
+                volunteerItems.map((item) => (
+                  <MarketplaceCard key={item.id} item={item} />
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-12">
+                  <p className="text-gray-500">No volunteer opportunities found. Try adjusting your filters.</p>
+                </div>
+              )}
             </div>
           </TabsContent>
           
           <TabsContent value="fundraising" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {fundraisingItems.map((item) => (
-                <MarketplaceCard key={item.id} item={item} />
-              ))}
+              {fundraisingItems.length > 0 ? (
+                fundraisingItems.map((item) => (
+                  <MarketplaceCard key={item.id} item={item} />
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-12">
+                  <p className="text-gray-500">No fundraising campaigns found. Try adjusting your filters.</p>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>

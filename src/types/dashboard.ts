@@ -95,5 +95,14 @@ export interface Marketplace {
   raised?: number;
   endDate?: string;
   
+  // Additional fields
+  impact?: string;
+  requirements?: string[];
+  contactInfo?: string;
+  websiteUrl?: string;
+  tags?: string[];
+  createdAt?: string;
+  
   points: number;
 }
+

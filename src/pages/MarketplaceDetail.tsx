@@ -2,18 +2,20 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { mockMarketplace, mockImpactCategories } from '../services/mockData';
+import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '../services/mockData';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, MapPin, Calendar, Users, DollarSign, Clock, Heart, Share2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Users, DollarSign, Clock, Heart, Share2, Globe, Mail, Phone } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 const MarketplaceDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  const item = mockMarketplace.find(item => item.id === id);
+  const item = getMarketplaceItemById(id || '');
   
   if (!item) {
     return (
@@ -78,12 +80,14 @@ const MarketplaceDetail: React.FC = () => {
                 <p className="text-gray-700">{item.description}</p>
               </div>
               
-              <div>
-                <h2 className="text-xl font-bold mb-3">Impact</h2>
-                <p className="text-gray-700">{item.impact}</p>
-              </div>
+              {item.impact && (
+                <div>
+                  <h2 className="text-xl font-bold mb-3">Impact</h2>
+                  <p className="text-gray-700">{item.impact}</p>
+                </div>
+              )}
               
-              {item.requirements && (
+              {item.requirements && item.requirements.length > 0 && (
                 <div>
                   <h2 className="text-xl font-bold mb-3">Requirements</h2>
                   <ul className="list-disc pl-5 space-y-1">
@@ -91,6 +95,36 @@ const MarketplaceDetail: React.FC = () => {
                       <li key={index} className="text-gray-700">{req}</li>
                     ))}
                   </ul>
+                </div>
+              )}
+              
+              {item.contactInfo && (
+                <div>
+                  <h2 className="text-xl font-bold mb-3">Contact Information</h2>
+                  <div className="flex items-center text-gray-700 mb-2">
+                    <Mail className="h-4 w-4 mr-2" />
+                    <span>{item.contactInfo}</span>
+                  </div>
+                  {item.websiteUrl && (
+                    <div className="flex items-center text-gray-700">
+                      <Globe className="h-4 w-4 mr-2" />
+                      <a 
+                        href={item.websiteUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Visit Website
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {item.createdAt && (
+                <div className="text-sm text-gray-500">
+                  Posted: {new Date(item.createdAt).toLocaleDateString()}
                 </div>
               )}
             </div>
@@ -186,6 +220,30 @@ const MarketplaceDetail: React.FC = () => {
                 </Button>
               </CardContent>
             </Card>
+            
+            {item.type === 'volunteer' && (
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="font-bold text-lg">Key Information</h3>
+                  <Table>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">Commitment</TableCell>
+                        <TableCell>{item.commitment}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Location</TableCell>
+                        <TableCell>{item.location}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Available Spots</TableCell>
+                        <TableCell>{item.slots - item.slotsFilled}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

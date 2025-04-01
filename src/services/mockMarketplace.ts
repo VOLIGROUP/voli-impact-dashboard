@@ -25,6 +25,12 @@ export const mockMarketplace: Marketplace[] = [
     points: 120,
     slots: 25,
     slotsFilled: 18,
+    impact: 'Create green spaces in urban neighborhoods, growing fresh produce for communities',
+    requirements: [
+      'No experience required',
+      'Must be physically able to garden',
+      'Bring your own gardening gloves if possible'
+    ]
   },
   {
     id: '2',
@@ -39,6 +45,8 @@ export const mockMarketplace: Marketplace[] = [
     raised: 32750,
     endDate: '2023-08-30T23:59:59Z',
     points: 200,
+    impact: 'Provide clean water access to 10,000+ people in developing regions',
+    requirements: []
   },
   {
     id: '3',
@@ -53,6 +61,12 @@ export const mockMarketplace: Marketplace[] = [
     points: 100,
     slots: 50,
     slotsFilled: 37,
+    impact: 'Help adults improve their reading and writing skills for better employment opportunities',
+    requirements: [
+      'Strong reading and writing skills',
+      'Patient and supportive attitude',
+      'Minimum commitment of 3 months'
+    ]
   },
   {
     id: '4',
@@ -67,6 +81,8 @@ export const mockMarketplace: Marketplace[] = [
     raised: 10875,
     endDate: '2023-09-15T23:59:59Z',
     points: 150,
+    impact: 'Provide sports equipment to 50+ schools in low-income areas',
+    requirements: []
   },
   {
     id: '5',
@@ -81,6 +97,13 @@ export const mockMarketplace: Marketplace[] = [
     points: 200,
     slots: 100,
     slotsFilled: 65,
+    impact: 'Build affordable housing for families in need across multiple communities',
+    requirements: [
+      'No construction experience necessary',
+      'Must be 18 years or older',
+      'Closed-toe shoes required',
+      'Able to lift 25 pounds'
+    ]
   },
   {
     id: '6',
@@ -95,6 +118,8 @@ export const mockMarketplace: Marketplace[] = [
     raised: 41200,
     endDate: '2023-10-01T23:59:59Z',
     points: 180,
+    impact: 'Fund renewable energy projects that will benefit 20+ rural communities',
+    requirements: []
   },
 ];
 
@@ -105,3 +130,4 @@ export const getImpactCategoryById = (id: string): ImpactCategory | undefined =>
 export const getMarketplaceItemById = (id: string): Marketplace | undefined => {
   return mockMarketplace.find(item => item.id === id);
 };
+
