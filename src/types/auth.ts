@@ -15,6 +15,10 @@ export interface User {
   lastActive: string;
   location?: string;
   coordinates?: [number, number]; // [longitude, latitude]
+  skills?: Skill[];
+  interests?: Interest[];
+  sdgs?: string[];
+  bio?: string;
 }
 
 export interface AuthContextType {

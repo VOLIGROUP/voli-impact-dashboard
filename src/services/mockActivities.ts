@@ -163,6 +163,11 @@ export const getActivitiesByUserId = (userId: string): Activity[] => {
   return mockActivities.filter(activity => activity.userId === userId);
 };
 
+// Utility function to get user activities for components
+export const getUserActivities = (userId: string): Activity[] => {
+  return getActivitiesByUserId(userId);
+};
+
 // Utility function to get activity by ID
 export const getActivityById = (id: string): Activity | undefined => {
   return mockActivities.find(activity => activity.id === id);
