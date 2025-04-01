@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import CompanyLogoUpload from '../components/settings/CompanyLogoUpload';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 
 const Settings: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
   const { toast } = useToast();
   
   const [profileForm, setProfileForm] = useState({
@@ -41,12 +41,17 @@ const Settings: React.FC = () => {
     setNotificationSettings(prev => ({ ...prev, [key]: checked }));
   };
   
-  const handleSaveProfile = () => {
-    // In a real app, this would call an API to update the user profile
-    toast({
-      title: "Profile updated",
-      description: "Your profile information has been saved successfully.",
-    });
+  const handleSaveProfile = async () => {
+    try {
+      await updateUserProfile({
+        name: profileForm.name,
+        email: profileForm.email,
+        organization: profileForm.organization,
+        // avatarUrl: profileForm.avatarUrl,
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
   
   const handleSaveNotifications = () => {
@@ -69,6 +74,7 @@ const Settings: React.FC = () => {
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList>
             <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="organization">Organization</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
@@ -135,6 +141,41 @@ const Settings: React.FC = () => {
                       onChange={handleProfileChange}
                       placeholder="Tell us about yourself and your impact goals"
                       rows={4}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button 
+                    className="bg-voli-primary hover:bg-voli-secondary text-black"
+                    onClick={handleSaveProfile}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="organization" className="space-y-6">
+            <CompanyLogoUpload />
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Organization Details</CardTitle>
+                <CardDescription>
+                  Update information about your organization
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="organization">Organization Name</Label>
+                    <Input
+                      id="organization"
+                      name="organization"
+                      value={profileForm.organization}
+                      onChange={handleProfileChange}
                     />
                   </div>
                 </div>

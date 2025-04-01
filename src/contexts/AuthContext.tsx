@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { mockUsers } from '../services/mockData';
 import { AuthContextType, User } from '../types/auth';
@@ -133,6 +132,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserProfile = async (userData: Partial<User>) => {
+    setIsLoading(true);
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      
+      // Update user data
+      const updatedUser = { ...user, ...userData, lastActive: new Date().toISOString() };
+      
+      // In a real app, this would call an API to update the user profile
+      // For the mock data, we'll just update the local state
+      
+      // Save to state and localStorage
+      setUser(updatedUser);
+      localStorage.setItem('voli_user', JSON.stringify(updatedUser));
+      
+      toast({
+        title: "Profile updated",
+        description: "Your profile information has been saved successfully.",
+      });
+      
+      return updatedUser;
+    } catch (error) {
+      toast({
+        title: "Update failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const value = {
     user,
     isLoading,
@@ -140,6 +177,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     logout,
     register,
+    updateUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

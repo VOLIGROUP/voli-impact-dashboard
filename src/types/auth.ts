@@ -8,6 +8,8 @@ export interface User {
   role: UserRole;
   avatarUrl?: string;
   organization?: string;
+  organizationId?: string;
+  companyLogo?: string;
   points: number;
   badges: string[];
   level: number;
@@ -22,4 +24,5 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (email: string, password: string, name: string) => Promise<void>;
+  updateUserProfile: (userData: Partial<User>) => Promise<void>;
 }
