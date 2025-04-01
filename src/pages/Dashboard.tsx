@@ -95,24 +95,15 @@ const Dashboard: React.FC = () => {
           dashboards={dashboards}
           onOpenImpactDialog={() => setImpactDialogOpen(true)}
           onOpenNewDashboardDialog={() => setNewDashboardDialogOpen(true)}
+          onAddWidget={() => setAddWidgetDialogOpen(true)}
+          hasWidgets={widgets.length > 0}
         />
         
         {selectedDashboard && widgets.length > 0 ? (
-          <>
-            <DashboardContent 
-              widgets={widgets} 
-              renderWidget={WidgetRenderer} 
-            />
-            <div className="flex justify-center mt-8">
-              <Button 
-                onClick={() => setAddWidgetDialogOpen(true)}
-                className="bg-voli-primary hover:bg-voli-secondary text-black"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Add More Widgets
-              </Button>
-            </div>
-          </>
+          <DashboardContent 
+            widgets={widgets} 
+            renderWidget={WidgetRenderer} 
+          />
         ) : selectedDashboard && widgets.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 bg-white rounded-lg shadow">
             <h2 className="text-xl font-medium mb-2">No widgets yet</h2>
