@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -6,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, PlusCircle } from 'lucide-react';
+import { Search, MapPin, PlusCircle, Filter } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Marketplace as MarketplaceType } from '../types/dashboard';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import MarketplaceCard from '../components/marketplace/MarketplaceCard';
 import CauseProfile from '../components/marketplace/CauseProfile';
@@ -24,6 +26,7 @@ const Marketplace: React.FC = () => {
     location.state?.viewCauseId || null
   );
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
   const { toast } = useToast();
   
   const isLoggedIn = true;
@@ -60,6 +63,12 @@ const Marketplace: React.FC = () => {
     } else {
       setSelectedCategory(null);
     }
+  };
+
+  // Clear selected filter
+  const clearFilter = () => {
+    setSelectedCategory(null);
+    setFilterOpen(false);
   };
 
   if (viewingCauseId) {
@@ -108,38 +117,81 @@ const Marketplace: React.FC = () => {
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-gray-700">Filter by UN Sustainable Development Goals</h2>
-          <div className="flex flex-wrap gap-1.5">
-            <Badge 
-              variant={selectedCategory === null ? "default" : "outline"}
-              className={`${selectedCategory === null ? "bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer" : "cursor-pointer"} text-xs py-0.5 px-1.5`}
-              onClick={() => setSelectedCategory(null)}
-            >
-              All SDGs
-            </Badge>
-            
-            {mockImpactCategories.map((category) => (
-              <Badge
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                className="cursor-pointer text-xs py-0.5 px-1.5"
-                style={{
-                  backgroundColor: selectedCategory === category.id ? category.color : 'transparent',
-                  color: selectedCategory === category.id ? 'white' : 'inherit',
-                  borderColor: category.color
-                }}
-                onClick={() => {
-                  if (selectedCategory === category.id) {
-                    handleCategoryClick(category.id);
-                  } else {
-                    setSelectedCategory(category.id);
-                  }
-                }}
+          
+          <div className="flex items-center gap-2">
+            {selectedCategory && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearFilter}
+                className="text-xs h-8"
               >
-                {category.name}
-              </Badge>
-            ))}
+                Clear Filter
+              </Button>
+            )}
+            
+            <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8"
+                >
+                  <Filter className="h-3.5 w-3.5 mr-1" />
+                  Filter
+                  {selectedCategory && (
+                    <Badge 
+                      variant="secondary" 
+                      className="ml-1 h-5 px-1 text-xs"
+                    >
+                      1
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-3 w-80" align="end">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">SDG Categories</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    <Badge 
+                      variant={selectedCategory === null ? "default" : "outline"}
+                      className={`${selectedCategory === null ? "bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer" : "cursor-pointer"} text-xs py-0.5 px-1.5`}
+                      onClick={() => {
+                        setSelectedCategory(null);
+                        setFilterOpen(false);
+                      }}
+                    >
+                      All SDGs
+                    </Badge>
+                    
+                    {mockImpactCategories.map((category) => (
+                      <Badge
+                        key={category.id}
+                        variant={selectedCategory === category.id ? "default" : "outline"}
+                        className="cursor-pointer text-xs py-0.5 px-1.5"
+                        style={{
+                          backgroundColor: selectedCategory === category.id ? category.color : 'transparent',
+                          color: selectedCategory === category.id ? 'white' : 'inherit',
+                          borderColor: category.color
+                        }}
+                        onClick={() => {
+                          if (selectedCategory === category.id) {
+                            handleCategoryClick(category.id);
+                          } else {
+                            setSelectedCategory(category.id);
+                            setFilterOpen(false);
+                          }
+                        }}
+                      >
+                        {category.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
         
