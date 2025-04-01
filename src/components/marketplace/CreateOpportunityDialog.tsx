@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -9,39 +8,34 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
 import { mockImpactCategories } from "../../services/mockMarketplace";
 import { useToast } from "@/hooks/use-toast";
 import { Marketplace } from "../../types/dashboard";
 import { Calendar, Clock, DollarSign, Image, MapPin, Users } from 'lucide-react';
 
-// Form schema for opportunity creation
 const opportunitySchema = z.object({
-  // Step 1: Basic Information
   title: z.string().min(5, { message: "Title must be at least 5 characters" }),
   organization: z.string().min(3, { message: "Organization name required" }),
   type: z.enum(["volunteer", "fundraising"], { 
     required_error: "Please select an opportunity type"
   }),
-  impactCategory: z.string({ required_error: "Please select a cause category" }),
+  impactCategory: z.string({ required_error: "Please select a primary SDG" }),
+  sdgGoals: z.array(z.string()).min(1, { message: "Select at least one SDG" }),
   
-  // Step 2: Details
   description: z.string().min(20, { message: "Please provide a detailed description (at least 20 characters)" }),
   location: z.string().min(3, { message: "Location is required" }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL" }).optional().or(z.literal("")),
   
-  // Step 3: Requirements & Goals (conditional based on type)
-  // Common fields
   points: z.number().min(1, { message: "Impact points must be at least 1" }),
   impact: z.string().min(10, { message: "Please describe the impact" }),
   requirements: z.string().optional(),
   contactInfo: z.string().email({ message: "Please provide a valid email" }),
   websiteUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
   
-  // Volunteer specific fields
   commitment: z.string().optional(),
   slots: z.number().min(1).optional(),
   
-  // Fundraising specific fields
   goal: z.number().min(1).optional(),
   endDate: z.string().optional(),
 });
@@ -67,6 +61,7 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
       description: "",
       location: "",
       imageUrl: "",
+      sdgGoals: [],
       points: 10,
       impact: "",
       requirements: "",
@@ -79,18 +74,16 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
     }
   });
 
-  // Handle opportunity type change
   const handleTypeChange = (value: "volunteer" | "fundraising") => {
     setOpportunityType(value);
     form.setValue("type", value);
   };
 
-  // Go to next step if validation passes
   const handleNext = async () => {
     let fieldsToValidate: (keyof OpportunityFormValues)[] = [];
     
     if (step === 1) {
-      fieldsToValidate = ["title", "organization", "type", "impactCategory"];
+      fieldsToValidate = ["title", "organization", "type", "impactCategory", "sdgGoals"];
     } else if (step === 2) {
       fieldsToValidate = ["description", "location"];
     }
@@ -102,21 +95,19 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
     }
   };
 
-  // Go back to previous step
   const handleBack = () => {
     setStep(step - 1);
   };
 
-  // Submit the form
   const handleSubmit = async (values: OpportunityFormValues) => {
     try {
-      // Format data for the Marketplace type
       const newOpportunity: Partial<Marketplace> = {
         id: Date.now().toString(),
         title: values.title,
         organization: values.organization,
         type: values.type,
         impactCategory: values.impactCategory,
+        sdgGoals: values.sdgGoals,
         description: values.description,
         location: values.location,
         image: values.imageUrl || "https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3",
@@ -128,7 +119,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
         createdAt: new Date().toISOString(),
       };
       
-      // Add opportunity type specific fields
       if (values.type === "volunteer") {
         newOpportunity.commitment = values.commitment;
         newOpportunity.slots = values.slots;
@@ -146,7 +136,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
         description: "Your opportunity has been published to the marketplace."
       });
       
-      // Reset form and close dialog
       form.reset();
       setStep(1);
       setOpportunityType(null);
@@ -181,7 +170,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            {/* Step 1: Basic Information */}
             {step === 1 && (
               <div className="space-y-4">
                 <FormField
@@ -245,21 +233,82 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
                   name="impactCategory"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Impact Category</FormLabel>
+                      <FormLabel>Primary SDG Goal</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a cause category" />
+                            <SelectValue placeholder="Select a primary SDG goal" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
+                            <SelectItem 
+                              key={category.id} 
+                              value={category.id}
+                              style={{
+                                color: category.color
+                              }}
+                            >
                               {category.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      <FormDescription>
+                        Select the primary UN Sustainable Development Goal this opportunity addresses.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="sdgGoals"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel>Additional SDG Goals</FormLabel>
+                        <FormDescription>
+                          Select all Sustainable Development Goals that your opportunity addresses.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {categories.map((sdg) => (
+                          <FormField
+                            key={sdg.id}
+                            control={form.control}
+                            name="sdgGoals"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={sdg.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(sdg.id)}
+                                      onCheckedChange={(checked) => {
+                                        const currentValues = field.value || [];
+                                        return checked
+                                          ? field.onChange([...currentValues, sdg.id])
+                                          : field.onChange(
+                                              currentValues.filter(
+                                                (value) => value !== sdg.id
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal" style={{ color: sdg.color }}>
+                                    {sdg.name}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -267,7 +316,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
               </div>
             )}
             
-            {/* Step 2: Details */}
             {step === 2 && (
               <div className="space-y-4">
                 <FormField
@@ -349,7 +397,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
               </div>
             )}
             
-            {/* Step 3: Requirements & Goals */}
             {step === 3 && (
               <div className="space-y-4">
                 <FormField
@@ -431,7 +478,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
                   )}
                 />
                 
-                {/* Volunteer specific fields */}
                 {opportunityType === "volunteer" && (
                   <>
                     <FormField
@@ -483,7 +529,6 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
                   </>
                 )}
                 
-                {/* Fundraising specific fields */}
                 {opportunityType === "fundraising" && (
                   <>
                     <FormField

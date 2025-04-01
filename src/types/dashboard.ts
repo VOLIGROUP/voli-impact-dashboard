@@ -85,6 +85,7 @@ export interface Marketplace {
   description: string;
   image: string;
   impactCategory: string;
+  sdgGoals?: string[]; // New field for multiple SDG goals
   
   // For volunteer opportunities
   commitment?: string;
@@ -106,4 +107,3 @@ export interface Marketplace {
   
   points: number;
 }
-

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '../services/mockMarketplace';
 import { Button } from "@/components/ui/button";
@@ -16,13 +16,19 @@ import CauseProfile from '../components/marketplace/CauseProfile';
 import CreateOpportunityDialog from '../components/marketplace/CreateOpportunityDialog';
 
 const Marketplace: React.FC = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceType[]>(mockMarketplace);
   const [isLoading, setIsLoading] = useState(false);
-  const [viewingCauseId, setViewingCauseId] = useState<string | null>(null);
+  const [viewingCauseId, setViewingCauseId] = useState<string | null>(
+    location.state?.viewCauseId || null
+  );
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { toast } = useToast();
+  
+  // Determine if a user is logged in (mock implementation)
+  const isLoggedIn = true; // In a real app, this would come from auth context
   
   const filteredItems = marketplaceItems.filter(item => {
     const matchesSearch = 
@@ -30,7 +36,11 @@ const Marketplace: React.FC = () => {
       item.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCategory = selectedCategory ? item.impactCategory === selectedCategory : true;
+    // Filter by primary category or any of the SDG goals
+    const matchesCategory = selectedCategory 
+      ? item.impactCategory === selectedCategory || 
+        (item.sdgGoals && item.sdgGoals.includes(selectedCategory))
+      : true;
     
     return matchesSearch && matchesCategory;
   });
@@ -76,7 +86,7 @@ const Marketplace: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Impact Marketplace</h1>
             <p className="text-gray-500">
-              Discover volunteering opportunities and fundraising campaigns
+              Discover volunteering opportunities and fundraising campaigns aligned with the UN Sustainable Development Goals
             </p>
           </div>
           
@@ -91,41 +101,52 @@ const Marketplace: React.FC = () => {
               />
             </div>
             
-            <Button 
-              className="bg-voli-primary hover:bg-voli-secondary text-black whitespace-nowrap"
-              onClick={() => setCreateDialogOpen(true)}
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Create Opportunity
-            </Button>
+            {isLoggedIn && (
+              <Button 
+                className="bg-voli-primary hover:bg-voli-secondary text-black whitespace-nowrap"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Create Opportunity
+              </Button>
+            )}
           </div>
         </div>
         
-        <div className="flex flex-wrap gap-2">
-          <Badge 
-            variant={selectedCategory === null ? "default" : "outline"}
-            className={selectedCategory === null ? "bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer" : "cursor-pointer"}
-            onClick={() => setSelectedCategory(null)}
-          >
-            All Categories
-          </Badge>
-          
-          {mockImpactCategories.map((category) => (
-            <Badge
-              key={category.id}
-              variant={selectedCategory === category.id ? "default" : "outline"}
-              className={selectedCategory === category.id ? `bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer` : "cursor-pointer"}
-              onClick={() => {
-                if (selectedCategory === category.id) {
-                  handleCategoryClick(category.id);
-                } else {
-                  setSelectedCategory(category.id);
-                }
-              }}
+        {/* SDGs Categories */}
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-gray-700">Filter by UN Sustainable Development Goals</h2>
+          <div className="flex flex-wrap gap-2">
+            <Badge 
+              variant={selectedCategory === null ? "default" : "outline"}
+              className={selectedCategory === null ? "bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer" : "cursor-pointer"}
+              onClick={() => setSelectedCategory(null)}
             >
-              {category.name}
+              All SDGs
             </Badge>
-          ))}
+            
+            {mockImpactCategories.map((category) => (
+              <Badge
+                key={category.id}
+                variant={selectedCategory === category.id ? "default" : "outline"}
+                className="cursor-pointer"
+                style={{
+                  backgroundColor: selectedCategory === category.id ? category.color : 'transparent',
+                  color: selectedCategory === category.id ? 'white' : 'inherit',
+                  borderColor: category.color
+                }}
+                onClick={() => {
+                  if (selectedCategory === category.id) {
+                    handleCategoryClick(category.id);
+                  } else {
+                    setSelectedCategory(category.id);
+                  }
+                }}
+              >
+                {category.name}
+              </Badge>
+            ))}
+          </div>
         </div>
         
         <Tabs defaultValue="all" className="space-y-6">
@@ -139,7 +160,11 @@ const Marketplace: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredItems.length > 0 ? (
                 filteredItems.map((item) => (
-                  <MarketplaceCard key={item.id} item={item} />
+                  <MarketplaceCard 
+                    key={item.id} 
+                    item={item} 
+                    readOnly={!isLoggedIn}
+                  />
                 ))
               ) : (
                 <div className="col-span-3 text-center py-12">
@@ -153,7 +178,11 @@ const Marketplace: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {volunteerItems.length > 0 ? (
                 volunteerItems.map((item) => (
-                  <MarketplaceCard key={item.id} item={item} />
+                  <MarketplaceCard 
+                    key={item.id} 
+                    item={item} 
+                    readOnly={!isLoggedIn} 
+                  />
                 ))
               ) : (
                 <div className="col-span-3 text-center py-12">
@@ -167,7 +196,11 @@ const Marketplace: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {fundraisingItems.length > 0 ? (
                 fundraisingItems.map((item) => (
-                  <MarketplaceCard key={item.id} item={item} />
+                  <MarketplaceCard 
+                    key={item.id} 
+                    item={item} 
+                    readOnly={!isLoggedIn}
+                  />
                 ))
               ) : (
                 <div className="col-span-3 text-center py-12">
@@ -179,11 +212,13 @@ const Marketplace: React.FC = () => {
         </Tabs>
       </div>
       
-      <CreateOpportunityDialog 
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-        onSubmit={handleCreateOpportunity}
-      />
+      {isLoggedIn && (
+        <CreateOpportunityDialog 
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+          onSubmit={handleCreateOpportunity}
+        />
+      )}
     </Layout>
   );
 };

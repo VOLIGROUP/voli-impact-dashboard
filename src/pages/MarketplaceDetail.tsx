@@ -2,7 +2,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { mockImpactCategories, getMarketplaceItemById } from '../services/mockMarketplace';
+import { mockImpactCategories, getMarketplaceItemById, getSDGsForMarketplaceItem } from '../services/mockMarketplace';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -10,12 +10,17 @@ import { ArrowLeft, MapPin, Calendar, Users, DollarSign, Clock, Heart, Share2, G
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
 
 const MarketplaceDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const item = getMarketplaceItemById(id || '');
+  
+  // Mock implementation to check if user is logged in
+  const isLoggedIn = true; // In a real app, this would come from auth context
   
   if (!item) {
     return (
@@ -41,9 +46,61 @@ const MarketplaceDetail: React.FC = () => {
   }
   
   const category = mockImpactCategories.find(cat => cat.id === item.impactCategory);
+  const sdgGoals = getSDGsForMarketplaceItem(item.id);
   
-  const handleViewCauseProfile = () => {
-    navigate('/marketplace', { state: { viewCauseId: item.impactCategory } });
+  const handleViewCauseProfile = (sdgId: string) => {
+    navigate('/marketplace', { state: { viewCauseId: sdgId } });
+  };
+  
+  const handleActionClick = () => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to your VOLI account to participate in this opportunity.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    toast({
+      title: "Action Registered",
+      description: `You've successfully signed up for ${item.title}`,
+    });
+  };
+  
+  const handleShareClick = () => {
+    const shareUrl = `${window.location.origin}/marketplace/${item.id}?source=shared`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `VOLI: ${item.title}`,
+        text: `Check out this ${item.type} opportunity: ${item.title}`,
+        url: shareUrl,
+      }).catch(err => {
+        console.error('Error sharing:', err);
+        copyToClipboard(shareUrl);
+      });
+    } else {
+      copyToClipboard(shareUrl);
+    }
+  };
+  
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        toast({
+          title: "Link Copied",
+          description: "The shareable link has been copied to your clipboard.",
+        });
+      })
+      .catch(err => {
+        console.error('Failed to copy:', err);
+        toast({
+          title: "Copy Failed",
+          description: "Failed to copy link. Please try again.",
+          variant: "destructive"
+        });
+      });
   };
   
   return (
@@ -77,6 +134,29 @@ const MarketplaceDetail: React.FC = () => {
                 <p className="text-white/80 text-lg">{item.organization}</p>
               </div>
             </div>
+            
+            {/* SDG Goals Section */}
+            {sdgGoals && sdgGoals.length > 0 && (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h2 className="text-lg font-semibold mb-3">UN Sustainable Development Goals</h2>
+                <div className="flex flex-wrap gap-2">
+                  {sdgGoals.map((sdg) => (
+                    <Badge 
+                      key={sdg.id}
+                      style={{
+                        backgroundColor: `${sdg.color}20`,
+                        color: sdg.color,
+                        border: `1px solid ${sdg.color}40`
+                      }}
+                      className="cursor-pointer"
+                      onClick={() => handleViewCauseProfile(sdg.id)}
+                    >
+                      {sdg.name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
             
             <div className="space-y-6">
               <div>
@@ -142,9 +222,13 @@ const MarketplaceDetail: React.FC = () => {
                     <Button 
                       variant="outline" 
                       className="flex items-center gap-2"
-                      onClick={handleViewCauseProfile}
+                      onClick={() => handleViewCauseProfile(category.id)}
+                      style={{
+                        borderColor: category.color,
+                        color: category.color
+                      }}
                     >
-                      <span>{category.name}</span>
+                      <span>Primary: {category.name}</span>
                       <ExternalLink className="h-4 w-4" />
                     </Button>
                   )}
@@ -193,7 +277,10 @@ const MarketplaceDetail: React.FC = () => {
                 </div>
                 
                 <div className="pt-4 space-y-3">
-                  <Button className="w-full bg-voli-primary hover:bg-voli-secondary text-black">
+                  <Button 
+                    className="w-full bg-voli-primary hover:bg-voli-secondary text-black"
+                    onClick={handleActionClick}
+                  >
                     {item.type === 'volunteer' ? 'Sign Up Now' : 'Donate Now'}
                   </Button>
                   <div className="flex gap-3">
@@ -201,7 +288,7 @@ const MarketplaceDetail: React.FC = () => {
                       <Heart className="h-4 w-4 mr-2" />
                       Save
                     </Button>
-                    <Button variant="outline" className="flex-1">
+                    <Button variant="outline" className="flex-1" onClick={handleShareClick}>
                       <Share2 className="h-4 w-4 mr-2" />
                       Share
                     </Button>
