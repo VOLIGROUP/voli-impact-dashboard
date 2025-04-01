@@ -191,47 +191,49 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
           )}
         </CardContent>
         
-        <CardFooter className="px-4 py-3 border-t border-gray-100 flex justify-between">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-9 w-9"
-                  onClick={handleSaveClick}
-                  disabled={readOnly}
-                >
-                  <Heart className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Save to favorites</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  className="h-9 w-9"
-                  onClick={handleShareClick}
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Share this opportunity</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <CardFooter className="px-4 py-3 border-t border-gray-100 flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-8 w-8"
+                    onClick={handleSaveClick}
+                    disabled={readOnly}
+                  >
+                    <Heart className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Save to favorites</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleShareClick}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Share this opportunity</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
           <Button 
             size="sm" 
-            className="flex-1 ml-2 bg-voli-primary hover:bg-voli-secondary text-black"
+            className="flex-1 bg-voli-primary hover:bg-voli-secondary text-black whitespace-nowrap"
             onClick={handleActionClick}
           >
             {item.type === 'volunteer' ? 'Sign Up' : 'Donate'}
