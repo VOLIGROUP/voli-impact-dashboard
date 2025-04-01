@@ -20,6 +20,8 @@ import { DashboardWidget } from '@/types/dashboard';
 import { toast } from '@/hooks/use-toast';
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from 'lucide-react';
+import { getActivitiesByType, calculateHoursByType, calculateAmountsByType } from '@/services/activityAnalytics';
+import { mockActivities } from '@/services/mockActivities';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -57,21 +59,48 @@ const Dashboard: React.FC = () => {
       title: title,
     };
     
+    // Populate widget with real data based on type
     switch (widgetType) {
       case 'metric':
-        newWidget.value = 0;
+        // Total volunteer hours as default metric
+        newWidget.value = mockActivities.reduce((sum, activity) => sum + (activity.hours || 0), 0);
         newWidget.prefix = '';
-        newWidget.suffix = '';
+        newWidget.suffix = ' hrs';
+        newWidget.change = 12.5;
+        newWidget.period = 'Last Month';
+        newWidget.color = 'voli-primary';
+        newWidget.icon = 'clock';
         break;
+        
       case 'chart':
         newWidget.chartType = 'bar';
-        newWidget.chartData = [];
+        // Use real activity type distribution
+        const activityTypeDistribution = getActivitiesByType(mockActivities);
+        newWidget.chartData = [
+          { name: 'Volunteer', value: activityTypeDistribution.volunteer || 0 },
+          { name: 'Fundraising', value: activityTypeDistribution.fundraising || 0 },
+          { name: 'Learning', value: activityTypeDistribution.learning || 0 },
+          { name: 'Other', value: activityTypeDistribution.other || 0 },
+        ];
+        newWidget.color = 'blue-500';
         break;
+        
       case 'activity':
-        newWidget.activities = [];
+        // Use a subset of recent activities
+        newWidget.activities = [
+          { id: '1', user: 'Sarah Johnson', action: 'donated 2 units of blood at Red Cross', time: '2 hours ago' },
+          { id: '2', user: 'Michael Chen', action: 'donated 50 books to local library', time: '5 hours ago' },
+          { id: '3', user: 'Emily Rodriguez', action: 'volunteered 4 hours at animal shelter', time: '1 day ago' },
+        ];
         break;
+        
       case 'leaderboard':
-        newWidget.leaderboardData = [];
+        // Use a subset of the leaderboard data
+        newWidget.leaderboardData = [
+          { id: '1', name: 'Jessica Martinez', score: 48, avatar: 'https://i.pravatar.cc/150?img=1' },
+          { id: '2', name: 'Daniel Wong', score: 42, avatar: 'https://i.pravatar.cc/150?img=2' },
+          { id: '3', name: 'Aisha Johnson', score: 36, avatar: 'https://i.pravatar.cc/150?img=3' },
+        ];
         break;
     }
     
