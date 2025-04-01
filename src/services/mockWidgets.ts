@@ -1,5 +1,12 @@
+
 import { DashboardWidget } from '@/types/dashboard';
 import { mockActivities } from './mockActivities';
+import { 
+  getActivitiesByType, 
+  calculateHoursByType, 
+  calculateAmountsByType, 
+  groupActivitiesByMonth 
+} from './activityAnalytics';
 
 // Prepare activity data for charts
 const activityTypeDistribution = getActivitiesByType(mockActivities);

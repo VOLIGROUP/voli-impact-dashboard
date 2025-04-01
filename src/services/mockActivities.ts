@@ -1,217 +1,348 @@
+import { Activity } from '@/types/dashboard';
 
-import { Activity } from '../types/dashboard';
-
-// Mock activity data with guaranteed location information
+// Mock Activities Data
 export const mockActivities: Activity[] = [
   {
-    id: 'act-001',
-    userId: 'user1',
-    title: 'Beach Cleanup Initiative',
-    description: 'Volunteers cleaned up 50kg of plastic waste from the shoreline.',
-    date: new Date().toISOString(),
-    type: 'volunteer',
-    points: 75,
-    impact: 'Removed harmful waste from marine ecosystem',
-    hours: 4,
-    location: 'Santa Monica Beach, CA',
-    coordinates: [-118.4912, 34.0195]
-  },
-  {
-    id: 'act-002',
-    userId: 'user2',
-    title: 'Tree Planting Campaign',
-    description: 'Community event to plant native trees and shrubs.',
-    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'volunteer',
-    points: 60,
-    impact: 'Contributing to urban greenery and carbon capture',
-    hours: 3,
-    location: 'Central Park, NY',
-    coordinates: [-73.9654, 40.7829]
-  },
-  {
-    id: 'act-003',
-    userId: 'user1',
-    title: 'Fundraising for Local School',
-    description: 'Community fundraiser for school supplies and equipment.',
-    date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'fundraising',
-    points: 90,
-    impact: 'Improved educational resources for underprivileged students',
-    amountRaised: 2500,
-    location: 'Lincoln High School, Chicago',
-    coordinates: [-87.6501, 41.8781]
-  },
-  {
-    id: 'act-004',
-    userId: 'user3',
-    title: 'Food Drive Organization',
-    description: 'Collected non-perishable food items for local food bank.',
-    date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'volunteer',
-    points: 55,
-    impact: 'Provided meals for 150+ families in need',
-    hours: 5,
-    location: 'Community Food Bank, Houston',
-    coordinates: [-95.3698, 29.7604]
-  },
-  {
-    id: 'act-005',
-    userId: 'user2',
-    title: 'Coding Workshop for Kids',
-    description: 'Teaching basic programming concepts to elementary school students.',
-    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'learning',
-    points: 45,
-    impact: 'Introduced 30 children to STEM education',
-    hours: 2,
-    location: 'Tech Learning Center, San Francisco',
-    coordinates: [-122.4194, 37.7749]
-  },
-  {
-    id: 'act-006',
-    userId: 'user3',
-    title: 'River Cleanup Project',
-    description: 'Volunteer team removed debris and trash from local watershed.',
-    date: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'volunteer',
-    points: 70,
-    impact: 'Improved water quality and protected wildlife',
-    hours: 6,
-    location: 'Hudson River, NY',
-    coordinates: [-73.9261, 40.8722]
-  },
-  {
-    id: 'act-007',
-    userId: 'user1',
-    title: 'Marathon Fundraiser',
-    description: 'Raised money for cancer research by participating in city marathon.',
-    date: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'fundraising',
-    points: 100,
-    impact: 'Contributed to funding for breakthrough research',
-    amountRaised: 3200,
-    location: 'Boston Marathon Route',
-    coordinates: [-71.0589, 42.3601]
-  },
-  {
-    id: 'act-008',
-    userId: 'user2',
-    title: 'Homeless Shelter Assistance',
-    description: 'Volunteered at local shelter serving meals and organizing donations.',
-    date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'volunteer',
-    points: 60,
-    impact: 'Provided essential services to vulnerable population',
-    hours: 4,
-    location: 'Downtown Shelter, Seattle',
-    coordinates: [-122.3321, 47.6062]
-  },
-  {
-    id: 'act-009',
-    userId: 'user3',
-    title: 'Environmental Workshop',
-    description: 'Educational session on sustainability practices for community members.',
-    date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    type: 'learning',
-    points: 40,
-    impact: 'Raised awareness about environmental issues',
-    hours: 2,
-    location: 'Community Center, Portland',
-    coordinates: [-122.6784, 45.5152]
-  },
-  {
-    id: 'act-010',
-    userId: 'user1',
-    title: 'Senior Center Support',
-    description: 'Spent time with elderly residents, playing games and socializing.',
-    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    id: '1',
+    userId: '101',
+    title: 'Coastal Cleanup Initiative',
+    description: 'Volunteers cleaned up litter along the beach, focusing on plastic waste.',
+    date: '2023-01-15T08:00:00Z',
     type: 'volunteer',
     points: 50,
-    impact: 'Reduced isolation among seniors',
+    impact: 'Environmental Conservation',
+    hours: 4,
+    location: 'Santa Monica Beach',
+    coordinates: [-118.4912, 34.0043],
+  },
+  {
+    id: '2',
+    userId: '102',
+    title: 'Community Garden Planting',
+    description: 'Planted organic vegetables and herbs in the community garden.',
+    date: '2023-02-20T10:00:00Z',
+    type: 'volunteer',
+    points: 40,
+    impact: 'Community Development',
     hours: 3,
-    location: 'Golden Years Center, Miami',
-    coordinates: [-80.1918, 25.7617]
-  }
+    location: 'Echo Park',
+    coordinates: [-118.2507, 34.0723],
+  },
+  {
+    id: '3',
+    userId: '103',
+    title: 'Fundraising Gala for Education',
+    description: 'Organized a gala to raise funds for educational programs in underserved communities.',
+    date: '2023-03-10T18:00:00Z',
+    type: 'fundraising',
+    points: 75,
+    impact: 'Education',
+    amountRaised: 5000,
+    location: 'Beverly Hills Hotel',
+    coordinates: [-118.4004, 34.0773],
+  },
+  {
+    id: '4',
+    userId: '104',
+    title: 'Coding Workshop for Teens',
+    description: 'Conducted a coding workshop to introduce teenagers to programming.',
+    date: '2023-04-05T14:00:00Z',
+    type: 'learning',
+    points: 60,
+    impact: 'Education',
+    hours: 2,
+    location: 'Local Library',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '5',
+    userId: '105',
+    title: 'Blood Donation Drive',
+    description: 'Organized a blood donation drive to support local hospitals.',
+    date: '2023-05-12T09:00:00Z',
+    type: 'donation',
+    points: 55,
+    impact: 'Health',
+    hours: 5,
+    location: 'Community Center',
+    coordinates: [-118.1697, 34.1480],
+  },
+  {
+    id: '6',
+    userId: '106',
+    title: 'Environmental Awareness Campaign',
+    description: 'Launched a campaign to raise awareness about environmental issues.',
+    date: '2023-06-22T11:00:00Z',
+    type: 'other',
+    points: 45,
+    impact: 'Environmental Conservation',
+    hours: 3,
+    location: 'City Park',
+    coordinates: [-118.2851, 34.0205],
+  },
+  {
+    id: '7',
+    userId: '107',
+    title: 'Homeless Shelter Volunteering',
+    description: 'Volunteered at a homeless shelter, serving meals and providing support.',
+    date: '2023-07-08T16:00:00Z',
+    type: 'volunteer',
+    points: 65,
+    impact: 'Community Development',
+    hours: 4,
+    location: 'Downtown Shelter',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '8',
+    userId: '108',
+    title: 'Marathon for Charity',
+    description: 'Participated in a marathon to raise money for cancer research.',
+    date: '2023-08-15T07:00:00Z',
+    type: 'fundraising',
+    points: 80,
+    impact: 'Health',
+    amountRaised: 10000,
+    location: 'Los Angeles',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '9',
+    userId: '109',
+    title: 'Online Course on Sustainability',
+    description: 'Completed an online course to learn about sustainable practices.',
+    date: '2023-09-01T00:00:00Z',
+    type: 'learning',
+    points: 50,
+    impact: 'Environmental Conservation',
+    hours: 10,
+    location: 'Online',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '10',
+    userId: '110',
+    title: 'Clothing Donation Drive',
+    description: 'Collected and donated clothing to a local charity.',
+    date: '2023-10-10T12:00:00Z',
+    type: 'donation',
+    points: 40,
+    impact: 'Community Development',
+    hours: 2,
+    location: 'Local Charity',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '11',
+    userId: '101',
+    title: 'Tree Planting Event',
+    description: 'Planted trees in a local park to improve air quality.',
+    date: '2023-11-03T09:00:00Z',
+    type: 'volunteer',
+    points: 60,
+    impact: 'Environmental Conservation',
+    hours: 5,
+    location: 'Griffith Park',
+    coordinates: [-118.2921, 34.1365],
+  },
+  {
+    id: '12',
+    userId: '102',
+    title: 'Thanksgiving Food Drive',
+    description: 'Collected and distributed food to families in need for Thanksgiving.',
+    date: '2023-11-23T14:00:00Z',
+    type: 'donation',
+    points: 55,
+    impact: 'Community Development',
+    hours: 4,
+    location: 'Community Center',
+    coordinates: [-118.1697, 34.1480],
+  },
+  {
+    id: '13',
+    userId: '103',
+    title: 'Holiday Toy Drive',
+    description: 'Organized a toy drive to provide gifts for children during the holidays.',
+    date: '2023-12-15T10:00:00Z',
+    type: 'fundraising',
+    points: 70,
+    impact: 'Community Development',
+    amountRaised: 3000,
+    location: 'Various Locations',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '14',
+    userId: '104',
+    title: 'First Aid Training Workshop',
+    description: 'Conducted a workshop to teach basic first aid skills.',
+    date: '2024-01-20T13:00:00Z',
+    type: 'learning',
+    points: 65,
+    impact: 'Health',
+    hours: 3,
+    location: 'Red Cross Center',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '15',
+    userId: '105',
+    title: 'Beach Cleanup',
+    description: 'Volunteers cleaned up trash and debris from the beach.',
+    date: '2024-02-10T09:00:00Z',
+    type: 'volunteer',
+    points: 50,
+    impact: 'Environmental Conservation',
+    hours: 4,
+    location: 'Venice Beach',
+    coordinates: [-118.4694, 33.9850],
+  },
+  {
+    id: '16',
+    userId: '106',
+    title: 'Tutoring Program for Students',
+    description: 'Provided tutoring services to students in math and science.',
+    date: '2024-03-05T15:00:00Z',
+    type: 'volunteer',
+    points: 60,
+    impact: 'Education',
+    hours: 2,
+    location: 'Local School',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '17',
+    userId: '107',
+    title: 'Charity Run for Cancer',
+    description: 'Participated in a charity run to raise money for cancer research.',
+    date: '2024-04-01T08:00:00Z',
+    type: 'fundraising',
+    points: 75,
+    impact: 'Health',
+    amountRaised: 7500,
+    location: 'City Park',
+    coordinates: [-118.2851, 34.0205],
+  },
+  {
+    id: '18',
+    userId: '108',
+    title: 'Workshop on Climate Change',
+    description: 'Conducted a workshop to educate people about climate change.',
+    date: '2024-05-18T11:00:00Z',
+    type: 'learning',
+    points: 55,
+    impact: 'Environmental Conservation',
+    hours: 3,
+    location: 'Community Center',
+    coordinates: [-118.1697, 34.1480],
+  },
+  {
+    id: '19',
+    userId: '109',
+    title: 'Food Bank Volunteering',
+    description: 'Volunteered at a food bank, sorting and distributing food to those in need.',
+    date: '2024-06-12T14:00:00Z',
+    type: 'volunteer',
+    points: 65,
+    impact: 'Community Development',
+    hours: 4,
+    location: 'Local Food Bank',
+    coordinates: [-118.2437, 34.0522],
+  },
+  {
+    id: '20',
+    userId: '110',
+    title: 'Book Donation Drive',
+    description: 'Collected and donated books to a local library.',
+    date: '2024-07-01T10:00:00Z',
+    type: 'donation',
+    points: 45,
+    impact: 'Education',
+    hours: 2,
+    location: 'Local Library',
+    coordinates: [-118.2437, 34.0522],
+  },
 ];
 
-// Generate some mock activities at various global locations
-export const generateMockActivities = (): Activity[] => {
-  return mockActivities;
-};
-
-// Get activities for a specific user
-export const getUserActivities = (userId: string): Activity[] => {
+// Function to filter activities by user ID
+export const getUserActivities = (userId: string) => {
   return mockActivities.filter(activity => activity.userId === userId);
 };
 
-// Get activities by type
-export const getActivitiesByUserId = (userId: string): Activity[] => {
-  return mockActivities.filter(activity => activity.userId === userId);
-};
-
-// Generate heatmap data for the global impact map
+// Function to get heatmap data from activities
 export const getHeatMapData = (): [number, number, number][] => {
-  // Convert activity locations to heatmap format
-  const heatmapData: [number, number, number][] = mockActivities.map(activity => {
-    if (activity.coordinates) {
-      // Use points as intensity (normalized between 0.2 and 1.0)
-      const intensity = 0.2 + (activity.points / 100) * 0.8;
-      return [activity.coordinates[0], activity.coordinates[1], intensity];
-    }
-    return [0, 0, 0]; // Fallback (shouldn't happen with our updated data)
-  }).filter(point => point[0] !== 0 || point[1] !== 0); // Filter out any potential empty coordinates
-
-  // Add some additional global hotspots for better visualization
-  return [
-    ...heatmapData,
-    // Add major global cities as hotspots
-    [2.3522, 48.8566, 0.5],    // Paris
-    [13.4050, 52.5200, 0.6],   // Berlin
-    [139.6917, 35.6895, 0.8],  // Tokyo
-    [37.6173, 55.7558, 0.4],   // Moscow
-    [121.4737, 31.2304, 0.9],  // Shanghai
-    [77.2090, 28.6139, 0.7],   // New Delhi
-    [28.0339, -26.2023, 0.5],  // Johannesburg
-    [-58.3816, -34.6037, 0.4], // Buenos Aires
-    [-46.6333, -23.5505, 0.7], // São Paulo
-    [151.2093, -33.8688, 0.6], // Sydney
-    [103.8198, 1.3521, 0.8],   // Singapore
-    [30.0444, 31.2357, 0.3],   // Cairo
-    [55.2708, 25.2048, 0.7],   // Dubai
-    [174.7633, -36.8485, 0.2], // Auckland
-    [-99.1332, 19.4326, 0.6],  // Mexico City
-    [106.8294, -6.1751, 0.4]   // Jakarta
-  ];
+  // Convert existing coordinates from activities to the format needed by heatmap
+  return mockActivities
+    .filter(activity => activity.coordinates)
+    .map(activity => {
+      const [lng, lat] = activity.coordinates || [0, 0];
+      // Add an intensity value as the third element (can be based on hours, points, etc.)
+      const intensity = activity.points / 10; // Normalized intensity value
+      return [lng, lat, intensity];
+    });
 };
 
-// Get activities by coordinates (within a certain distance)
-export const getActivitiesByLocation = (coordinates: [number, number]): Activity[] => {
-  // Simple implementation - return activities closest to the given coordinates
-  // In a real app, you would use a proper distance calculation
+// Add a function to get activities by location
+export const getActivitiesByLocation = (): Record<string, any[]> => {
+  const locationMap: Record<string, any[]> = {};
   
-  // Calculate a rough distance between two coordinate points
-  const calculateDistance = (coord1: [number, number], coord2: [number, number]): number => {
-    const [lon1, lat1] = coord1;
-    const [lon2, lat2] = coord2;
-    return Math.sqrt(Math.pow(lon1 - lon2, 2) + Math.pow(lat1 - lat2, 2));
-  };
-  
-  // Find activities within a threshold distance of the given coordinates
-  const threshold = 5; // Arbitrary distance threshold
-  const nearbyActivities = mockActivities.filter(activity => {
-    if (!activity.coordinates) return false;
-    const distance = calculateDistance(coordinates, activity.coordinates);
-    return distance < threshold;
+  mockActivities.forEach(activity => {
+    if (activity.location) {
+      if (!locationMap[activity.location]) {
+        locationMap[activity.location] = [];
+      }
+      locationMap[activity.location].push(activity);
+    }
   });
   
-  // If no activities are found nearby, return a few activities with the coordinates adjusted
-  if (nearbyActivities.length === 0) {
-    return mockActivities.slice(0, 3).map(activity => ({
-      ...activity,
-      coordinates: coordinates
-    }));
-  }
-  
-  return nearbyActivities;
+  return locationMap;
+};
+
+// Function to group activities by type
+export const getActivitiesByType = (activities: Activity[]) => {
+  return activities.reduce((acc, activity) => {
+    acc[activity.type] = (acc[activity.type] || 0) + 1;
+    return acc;
+  }, {});
+};
+
+// Function to calculate total hours by activity type
+export const calculateHoursByType = (activities: Activity[]) => {
+  return activities.reduce((acc, activity) => {
+    if (activity.hours) {
+      acc[activity.type] = (acc[activity.type] || 0) + activity.hours;
+    }
+    return acc;
+  }, {});
+};
+
+// Function to calculate total amounts by activity type
+export const calculateAmountsByType = (activities: Activity[]) => {
+  return activities.reduce((acc, activity) => {
+    if (activity.amountRaised) {
+      acc[activity.type] = (acc[activity.type] || 0) + activity.amountRaised;
+    }
+    return acc;
+  }, {});
+};
+
+// Function to group activities by month
+export const groupActivitiesByMonth = (activities: Activity[]) => {
+  const grouped = activities.reduce((acc, activity) => {
+    const month = new Date(activity.date).toLocaleString('default', { month: 'long' });
+    if (!acc[month]) {
+      acc[month] = {
+        month: month,
+        points: 0,
+        hours: 0,
+        amounts: 0,
+      };
+    }
+    acc[month].points += activity.points;
+    acc[month].hours += activity.hours || 0;
+    acc[month].amounts += activity.amountRaised || 0;
+    return acc;
+  }, {});
+
+  return Object.values(grouped);
 };
