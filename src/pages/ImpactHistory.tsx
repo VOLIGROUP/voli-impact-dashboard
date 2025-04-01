@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { mockActivities } from '../services/mockData';
@@ -17,20 +16,70 @@ import {
   Clock, 
   Calendar, 
   Award, 
-  Heart
+  Heart,
+  Edit,
+  Trash2,
+  Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { 
+  Form, 
+  FormControl, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const ImpactHistory: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
+  const [activities, setActivities] = useState<Activity[]>(mockActivities);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [activityToDelete, setActivityToDelete] = useState<string | null>(null);
   
-  // All activities from the platform
-  const activities: Activity[] = mockActivities;
+  const formSchema = z.object({
+    title: z.string().min(2, "Title must be at least 2 characters."),
+    type: z.enum(["volunteer", "fundraising", "learning", "other"], {
+      required_error: "Please select an activity type.",
+    }),
+    description: z.string().min(5, "Description must be at least 5 characters."),
+    impact: z.string().min(5, "Impact description must be at least 5 characters."),
+    points: z.number().min(1, "Points must be at least 1."),
+    hours: z.number().optional(),
+    amountRaised: z.number().optional(),
+  });
   
-  // Filter activities based on search term and type
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      type: "volunteer",
+      description: "",
+      impact: "",
+      points: 0,
+      hours: 0,
+      amountRaised: 0,
+    }
+  });
+  
   const filteredActivities = activities.filter(activity => {
     const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,7 +90,6 @@ const ImpactHistory: React.FC = () => {
     return matchesSearch && matchesType;
   });
   
-  // Get icon based on activity type
   const getActivityIcon = (type: string) => {
     switch(type) {
       case 'volunteer':
@@ -63,6 +111,86 @@ const ImpactHistory: React.FC = () => {
     }
   };
   
+  const handleEditActivity = (activity: Activity) => {
+    setEditingActivity(activity);
+    form.reset({
+      title: activity.title,
+      type: activity.type,
+      description: activity.description,
+      impact: activity.impact,
+      points: activity.points,
+      hours: activity.hours || 0,
+      amountRaised: activity.amountRaised || 0,
+    });
+    setIsDialogOpen(true);
+  };
+  
+  const handleAddActivity = () => {
+    setEditingActivity(null);
+    form.reset({
+      title: "",
+      type: "volunteer",
+      description: "",
+      impact: "",
+      points: 0,
+      hours: 0,
+      amountRaised: 0,
+    });
+    setIsDialogOpen(true);
+  };
+  
+  const handleDeletePrompt = (activityId: string) => {
+    setActivityToDelete(activityId);
+    setIsDeleteConfirmOpen(true);
+  };
+  
+  const handleDeleteConfirm = () => {
+    if (activityToDelete) {
+      const updatedActivities = activities.filter(activity => activity.id !== activityToDelete);
+      setActivities(updatedActivities);
+      setIsDeleteConfirmOpen(false);
+      setActivityToDelete(null);
+      toast({
+        title: "Activity deleted",
+        description: "The activity has been permanently removed.",
+      });
+    }
+  };
+  
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (editingActivity) {
+      const updatedActivities = activities.map(activity => 
+        activity.id === editingActivity.id 
+          ? { 
+              ...activity, 
+              ...values, 
+              date: activity.date,
+              userId: activity.userId,
+              id: activity.id
+            } 
+          : activity
+      );
+      setActivities(updatedActivities);
+      toast({
+        title: "Activity updated",
+        description: "Your activity has been updated successfully.",
+      });
+    } else {
+      const newActivity: Activity = {
+        id: `${Date.now()}`,
+        userId: "1",
+        date: new Date().toISOString(),
+        ...values
+      };
+      setActivities([newActivity, ...activities]);
+      toast({
+        title: "Activity added",
+        description: "Your new activity has been added successfully.",
+      });
+    }
+    setIsDialogOpen(false);
+  };
+  
   return (
     <Layout>
       <div className="space-y-6">
@@ -81,6 +209,13 @@ const ImpactHistory: React.FC = () => {
               }}
             >
               Reset Filters
+            </Button>
+            <Button 
+              className="bg-voli-primary hover:bg-voli-secondary text-black"
+              onClick={handleAddActivity}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Activity
             </Button>
             <Button className="bg-voli-primary hover:bg-voli-secondary text-black">
               <Calendar className="h-4 w-4 mr-2" />
@@ -125,6 +260,7 @@ const ImpactHistory: React.FC = () => {
                 <TableHead>Impact</TableHead>
                 <TableHead className="text-right">Points</TableHead>
                 <TableHead className="text-right">Hours/Amount</TableHead>
+                <TableHead className="text-right w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -145,11 +281,29 @@ const ImpactHistory: React.FC = () => {
                       {activity.hours ? `${activity.hours} hrs` : ''}
                       {activity.amountRaised ? `$${activity.amountRaised}` : ''}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex space-x-2 justify-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditActivity(activity)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeletePrompt(activity.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                     No activities found matching your criteria.
                   </TableCell>
                 </TableRow>
@@ -158,6 +312,184 @@ const ImpactHistory: React.FC = () => {
           </Table>
         </div>
       </div>
+      
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{editingActivity ? "Edit Activity" : "Add New Activity"}</DialogTitle>
+            <DialogDescription>
+              {editingActivity 
+                ? "Edit your impact activity details below." 
+                : "Add a new impact activity to your history."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Activity title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Activity Type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select activity type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="volunteer">Volunteering</SelectItem>
+                        <SelectItem value="fundraising">Fundraising</SelectItem>
+                        <SelectItem value="learning">Learning</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Describe the activity" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="impact"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Impact</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Describe the impact of this activity" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="points"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Points</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="Points earned" 
+                          {...field}
+                          onChange={e => field.onChange(Number(e.target.value))}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {form.watch("type") === "volunteer" && (
+                  <FormField
+                    control={form.control}
+                    name="hours"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hours</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            placeholder="Hours spent" 
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                
+                {form.watch("type") === "fundraising" && (
+                  <FormField
+                    control={form.control}
+                    name="amountRaised"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Amount Raised ($)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number" 
+                            placeholder="Amount raised" 
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" type="button" onClick={() => setIsDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {editingActivity ? "Update Activity" : "Add Activity"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this activity? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
