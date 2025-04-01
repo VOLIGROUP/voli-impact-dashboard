@@ -1,23 +1,24 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { User } from '@/types/auth';
 import { Card, CardContent } from "@/components/ui/card";
-
-// You would normally store this in an environment variable
-// This is a temporary solution for demonstration purposes
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGVtby11c2VyIiwiYSI6ImNscXJ5czBnMDEwdmYya3A5ZmZ5OGdqNXcifQ.0X_I_ksf5Rw8dsNQrr7gIQ';
 
 interface MapViewProps {
   users: User[];
 }
 
+declare global {
+  interface Window {
+    google: any;
+    initMap: () => void;
+  }
+}
+
 const MapView: React.FC<MapViewProps> = ({ users }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState<string>(MAPBOX_TOKEN);
-
+  const [apiKey, setApiKey] = useState<string>("");
+  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  
   // Group users by location
   const locationGroups: Record<string, User[]> = {};
   users.forEach(user => {
@@ -29,106 +30,144 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
     }
   });
 
-  useEffect(() => {
-    if (!mapContainer.current) return;
+  // Function to initialize Google Maps
+  const initMap = () => {
+    if (!mapContainer.current || !window.google || !window.google.maps) return;
     
-    // Initialize map
-    mapboxgl.accessToken = mapboxToken;
-    
-    const initialCoordinates = users[0]?.coordinates || [0, 0];
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: initialCoordinates,
-      zoom: 1.5,
+    const map = new window.google.maps.Map(mapContainer.current, {
+      center: { lat: 0, lng: 0 },
+      zoom: 2,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: true,
     });
-
-    // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl(),
-      'top-right'
-    );
-
-    map.current.on('load', () => {
-      // Add markers for each user
-      users.forEach(user => {
-        if (user.coordinates) {
-          // Create a popup for the user
-          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-            `<div class="p-2">
-              <h3 class="font-bold">${user.name}</h3>
-              <p class="text-sm text-gray-600">${user.role}</p>
-              <p class="text-xs text-gray-500">${user.organization || ''}</p>
-            </div>`
-          );
-
-          // Create a custom marker element
-          const el = document.createElement('div');
-          el.className = 'marker';
-          el.style.backgroundImage = user.avatarUrl ? `url(${user.avatarUrl})` : '';
-          el.style.width = '30px';
-          el.style.height = '30px';
-          el.style.backgroundSize = 'cover';
-          el.style.borderRadius = '50%';
-          el.style.border = '2px solid #fff';
-          el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-          
-          // Add marker to map
-          new mapboxgl.Marker(el)
-            .setLngLat(user.coordinates)
-            .setPopup(popup)
-            .addTo(map.current!);
-        }
-      });
-
-      // Fit map to show all markers
-      const bounds = new mapboxgl.LngLatBounds();
-      users.forEach(user => {
-        if (user.coordinates) {
-          bounds.extend(user.coordinates as [number, number]);
-        }
-      });
-      
-      if (!bounds.isEmpty()) {
-        map.current!.fitBounds(bounds, {
-          padding: 50,
-          maxZoom: 12
+    
+    const bounds = new window.google.maps.LatLngBounds();
+    const infoWindow = new window.google.maps.InfoWindow();
+    
+    // Add markers for each user
+    users.forEach(user => {
+      if (user.coordinates) {
+        const [lng, lat] = user.coordinates;
+        const position = { lat, lng };
+        
+        // Extend bounds to include this point
+        bounds.extend(position);
+        
+        // Create a custom marker
+        const marker = new window.google.maps.Marker({
+          position,
+          map,
+          title: user.name,
+          icon: {
+            url: user.avatarUrl || 'https://i.pravatar.cc/40',
+            scaledSize: new window.google.maps.Size(30, 30),
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(15, 15),
+            borderRadius: 15
+          }
+        });
+        
+        // Create popup content
+        const content = `
+          <div class="p-3">
+            <div class="flex items-center mb-2">
+              <img src="${user.avatarUrl || 'https://i.pravatar.cc/40'}" class="w-10 h-10 rounded-full mr-3" />
+              <div>
+                <h3 class="font-bold">${user.name}</h3>
+                <p class="text-sm text-gray-600">${user.role}</p>
+              </div>
+            </div>
+            ${user.organization ? `<p class="text-sm text-gray-500">${user.organization}</p>` : ''}
+            <p class="text-sm text-gray-500">${user.location}</p>
+          </div>
+        `;
+        
+        // Add click listener for the popup
+        marker.addListener("click", () => {
+          infoWindow.setContent(content);
+          infoWindow.open({
+            anchor: marker,
+            map,
+          });
         });
       }
     });
-
-    // Cleanup
-    return () => {
-      map.current?.remove();
+    
+    // Fit map to show all markers
+    if (!bounds.isEmpty()) {
+      map.fitBounds(bounds);
+      
+      // Set a minimum zoom level
+      const listener = window.google.maps.event.addListener(map, "idle", () => {
+        if (map.getZoom() > 12) {
+          map.setZoom(12);
+        }
+        window.google.maps.event.removeListener(listener);
+      });
+    }
+  };
+  
+  // Load Google Maps API
+  useEffect(() => {
+    if (!apiKey) return;
+    
+    // Define the callback function
+    window.initMap = () => {
+      setMapLoaded(true);
     };
-  }, [users, mapboxToken]);
-
-  // Function to handle Mapbox token change
-  const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMapboxToken(e.target.value);
+    
+    // Create and add the script tag
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    
+    return () => {
+      // Clean up
+      document.head.removeChild(script);
+      delete window.initMap;
+    };
+  }, [apiKey]);
+  
+  // Initialize map when API is loaded
+  useEffect(() => {
+    if (mapLoaded) {
+      initMap();
+    }
+  }, [mapLoaded, users]);
+  
+  // Function to handle API key change
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setApiKey(e.target.value);
   };
 
   return (
     <Card className="w-full">
       <CardContent className="p-6">
         <div className="mb-4">
-          <label htmlFor="mapbox-token" className="block text-sm font-medium text-gray-700 mb-1">
-            Mapbox Token (for demonstration purposes only)
+          <label htmlFor="google-maps-key" className="block text-sm font-medium text-gray-700 mb-1">
+            Google Maps API Key (for demonstration purposes only)
           </label>
           <input
-            id="mapbox-token"
+            id="google-maps-key"
             type="text"
-            value={mapboxToken}
-            onChange={handleTokenChange}
+            value={apiKey}
+            onChange={handleApiKeyChange}
             className="w-full p-2 border border-gray-300 rounded-md text-sm"
-            placeholder="Enter your Mapbox token"
+            placeholder="Enter your Google Maps API key"
           />
           <p className="text-xs text-gray-500 mt-1">
-            For your own app, get a token from <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">mapbox.com</a>
+            For your own app, get a key from <a href="https://console.cloud.google.com/google/maps-apis/overview" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Google Cloud Console</a>
           </p>
         </div>
         <div className="h-[500px] relative rounded-lg overflow-hidden">
+          {!apiKey && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <p className="text-gray-500">Enter a Google Maps API key to view the map</p>
+            </div>
+          )}
           <div ref={mapContainer} className="absolute inset-0" />
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
