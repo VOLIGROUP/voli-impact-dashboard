@@ -241,7 +241,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
       </Card>
 
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-        <DialogContent className="sm:max-w-md p-6">
+        <DialogContent className="sm:max-w-md p-5">
           <div className="flex justify-between items-center mb-2">
             <DialogTitle className="text-xl font-semibold">Share This Opportunity</DialogTitle>
             <DialogClose className="h-4 w-4 rounded-sm opacity-70 ring-offset-background hover:opacity-100 focus:outline-none">
@@ -250,35 +250,36 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
             </DialogClose>
           </div>
           
-          <DialogDescription className="mt-0 mb-4">
+          <DialogDescription className="mt-0 mb-3">
             Share this {item.type === 'volunteer' ? 'volunteer opportunity' : 'fundraising campaign'} with others.
           </DialogDescription>
           
-          <div className="border rounded-md p-2 mb-6 bg-gray-50">
-            <div className="text-sm overflow-hidden text-ellipsis whitespace-nowrap">
-              {generateShareLink()}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex-1 border rounded-md p-2 bg-gray-50 overflow-hidden">
+              <div className="text-sm text-ellipsis overflow-hidden whitespace-nowrap">
+                {generateShareLink()}
+              </div>
             </div>
+            <Button 
+              type="button" 
+              className="bg-[#d4ff39] hover:bg-[#bce535] text-black h-10 px-3 flex items-center gap-1 whitespace-nowrap"
+              onClick={copyToClipboard}
+            >
+              {copied ? 'Copied!' : 'Copy'}
+              {!copied && <Copy className="h-4 w-4" />}
+            </Button>
           </div>
           
-          <div className="flex justify-between">
+          <div className="flex justify-start">
             <DialogClose asChild>
               <Button 
                 type="button" 
                 variant="outline"
-                className="px-6"
+                className="px-4"
               >
                 Close
               </Button>
             </DialogClose>
-            
-            <Button 
-              type="button" 
-              className="bg-[#d4ff39] hover:bg-[#bce535] text-black px-6 font-medium flex items-center gap-2"
-              onClick={copyToClipboard}
-            >
-              {copied ? 'Copied!' : 'Copy Link'}
-              {!copied && <Copy className="h-4 w-4" />}
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
