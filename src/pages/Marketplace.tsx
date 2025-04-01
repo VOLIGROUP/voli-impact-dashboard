@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -27,16 +26,14 @@ const Marketplace: React.FC = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { toast } = useToast();
   
-  // Determine if a user is logged in (mock implementation)
-  const isLoggedIn = true; // In a real app, this would come from auth context
-  
+  const isLoggedIn = true;
+
   const filteredItems = marketplaceItems.filter(item => {
     const matchesSearch = 
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    // Filter by primary category or any of the SDG goals
     const matchesCategory = selectedCategory 
       ? item.impactCategory === selectedCategory || 
         (item.sdgGoals && item.sdgGoals.includes(selectedCategory))
@@ -49,7 +46,6 @@ const Marketplace: React.FC = () => {
   const fundraisingItems = filteredItems.filter(item => item.type === 'fundraising');
 
   const handleCreateOpportunity = (newOpportunity: Partial<MarketplaceType>) => {
-    // Add the new opportunity to the marketplace items
     setMarketplaceItems(prev => [newOpportunity as MarketplaceType, ...prev]);
     
     toast({
@@ -66,7 +62,6 @@ const Marketplace: React.FC = () => {
     }
   };
 
-  // If viewing a cause profile, show that instead of the main marketplace
   if (viewingCauseId) {
     return (
       <Layout>
@@ -113,13 +108,12 @@ const Marketplace: React.FC = () => {
           </div>
         </div>
         
-        {/* SDGs Categories */}
         <div className="space-y-2">
           <h2 className="text-sm font-medium text-gray-700">Filter by UN Sustainable Development Goals</h2>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             <Badge 
               variant={selectedCategory === null ? "default" : "outline"}
-              className={selectedCategory === null ? "bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer" : "cursor-pointer"}
+              className={`${selectedCategory === null ? "bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer" : "cursor-pointer"} text-xs py-0.5 px-1.5`}
               onClick={() => setSelectedCategory(null)}
             >
               All SDGs
@@ -129,7 +123,7 @@ const Marketplace: React.FC = () => {
               <Badge
                 key={category.id}
                 variant={selectedCategory === category.id ? "default" : "outline"}
-                className="cursor-pointer"
+                className="cursor-pointer text-xs py-0.5 px-1.5"
                 style={{
                   backgroundColor: selectedCategory === category.id ? category.color : 'transparent',
                   color: selectedCategory === category.id ? 'white' : 'inherit',

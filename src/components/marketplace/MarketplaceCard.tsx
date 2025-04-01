@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -27,7 +26,6 @@ interface MarketplaceCardProps {
 const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = false }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const mainCategory = mockImpactCategories.find(cat => cat.id === item.impactCategory);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   
@@ -68,7 +66,6 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
   };
 
   const generateShareLink = () => {
-    // Create a shareable link (in a real app, this might use a URL shortener service)
     return `${window.location.origin}/marketplace/${item.id}?source=shared`;
   };
 
@@ -115,19 +112,6 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
             {item.type === 'volunteer' ? 'Volunteer' : 'Fundraising'}
           </Badge>
           
-          {mainCategory && (
-            <Badge 
-              className="absolute top-3 right-3 bg-white/70 backdrop-blur-sm"
-              style={{
-                backgroundColor: `${mainCategory.color}20`,
-                color: mainCategory.color,
-                border: `1px solid ${mainCategory.color}40`
-              }}
-            >
-              {mainCategory.name}
-            </Badge>
-          )}
-          
           <Badge className="absolute bottom-3 right-3 bg-black/70 text-white backdrop-blur-sm">
             {item.points} points
           </Badge>
@@ -142,7 +126,6 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
             <span>{item.location}</span>
           </div>
           
-          {/* SDG Goals Badges */}
           {sdgCategories && sdgCategories.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
               {sdgCategories.slice(0, 3).map((sdg) => (
@@ -233,7 +216,6 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
         </CardFooter>
       </Card>
 
-      {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
