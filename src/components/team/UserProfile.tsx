@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User } from '@/types/auth';
 import { Activity, Kudos, Interest, Skill, UserRanking, Charity } from '@/types/dashboard';
@@ -13,13 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { timeAgo } from "@/utils/dateUtils";
-import { Award, BarChart3, Heart, Calendar, Star, Smile, Send, Clock, Target, ThumbsUp, User as UserIcon, MessageSquare, Gift, Confetti } from 'lucide-react';
+import { Award, BarChart3, Heart, Calendar, Star, Smile, Send, Clock, Target, ThumbsUp, User as UserIcon, MessageSquare, Gift } from 'lucide-react';
 import { getUserActivities } from '@/services/mockActivities';
 import { useToast } from "@/hooks/use-toast";
 import Confetti from 'react-confetti';
 import { useAuth } from '@/contexts/AuthContext';
 
-// Mock data for a user profile
 const mockUserSkills: Record<string, Skill[]> = {
   '1': [
     { id: 's1', name: 'Leadership', level: 5 },
@@ -47,7 +45,6 @@ const mockUserSkills: Record<string, Skill[]> = {
   ],
 };
 
-// Default skills for users without specific skills assigned
 const defaultSkills: Skill[] = [
   { id: 'ds1', name: 'Communication', level: 3 },
   { id: 'ds2', name: 'Teamwork', level: 4 },
@@ -76,7 +73,6 @@ const mockUserInterests: Record<string, Interest[]> = {
   ],
 };
 
-// Default interests for users without specific interests assigned
 const defaultInterests: Interest[] = [
   { id: 'di1', name: 'Volunteering' },
   { id: 'di2', name: 'Sustainability' },
@@ -91,7 +87,6 @@ const mockUserCharities: Record<string, string[]> = {
   '5': ['charity2', 'charity4', 'charity1'],
 };
 
-// Default charities for users without specific charities assigned
 const defaultCharities: string[] = ['charity1', 'charity3', 'charity5'];
 
 const mockKudos: Kudos[] = [
@@ -129,7 +124,6 @@ const mockKudos: Kudos[] = [
   },
 ];
 
-// Calculate user ranking based on points
 const getUserRanking = (points: number): UserRanking => {
   if (points >= 1000) {
     return { 
@@ -164,12 +158,10 @@ const getUserRanking = (points: number): UserRanking => {
   }
 };
 
-// Get user kudos
 const getUserReceivedKudos = (userId: string): Kudos[] => {
   return mockKudos.filter(kudos => kudos.toUserId === userId);
 };
 
-// Get user given kudos
 const getUserGivenKudos = (userId: string): Kudos[] => {
   return mockKudos.filter(kudos => kudos.fromUserId === userId);
 };
@@ -186,7 +178,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId, onClose }) => {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
   
-  // Get user data
   const user = mockUsers.find(u => u.id === userId);
   
   if (!user) {
@@ -200,7 +191,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId, onClose }) => {
     );
   }
   
-  // Get user data
   const activities = getUserActivities(userId);
   const skills = mockUserSkills[userId] || defaultSkills;
   const interests = mockUserInterests[userId] || defaultInterests;
@@ -213,7 +203,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId, onClose }) => {
   const givenKudos = getUserGivenKudos(userId);
   const ranking = getUserRanking(user.points);
   
-  // Calculate completion percentage towards next level
   const nextLevelPoints = (user.level + 1) * 250;
   const currentLevelPoints = user.level * 250;
   const progressToNextLevel = ((user.points - currentLevelPoints) / (nextLevelPoints - currentLevelPoints)) * 100;
@@ -228,18 +217,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId, onClose }) => {
       return;
     }
     
-    // Show confetti animation
     setShowConfetti(true);
     
-    // Hide confetti after 5 seconds
     setTimeout(() => {
       setShowConfetti(false);
     }, 5000);
     
-    // Clear kudos message
     setKudosMessage('');
     
-    // Show success toast
     toast({
       title: "Kudos sent!",
       description: `You've successfully sent kudos to ${user.name}`,
@@ -432,7 +417,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId, onClose }) => {
                     onClick={handleSendKudos}
                     className="bg-purple-600 hover:bg-purple-700 text-white w-full"
                   >
-                    <Confetti className="mr-2 h-4 w-4" />
+                    <Star className="mr-2 h-4 w-4" />
                     Send Kudos
                   </Button>
                 </div>
