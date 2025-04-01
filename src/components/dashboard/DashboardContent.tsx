@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutGrid } from 'lucide-react';
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { DashboardWidget } from '@/types/dashboard';
 import MetricsRow from './MetricsRow';
 import ChartsRow from './ChartsRow';
@@ -15,15 +14,6 @@ interface DashboardContentProps {
 const DashboardContent: React.FC<DashboardContentProps> = ({ widgets, renderWidget }) => {
   return (
     <Tabs defaultValue="grid" className="space-y-4">
-      <div className="flex items-center justify-between">
-        <TabsList>
-          <TabsTrigger value="grid">
-            <LayoutGrid className="h-4 w-4 mr-2" />
-            Dashboard View
-          </TabsTrigger>
-        </TabsList>
-      </div>
-      
       <TabsContent value="grid" className="space-y-6">
         {/* Metrics Row - First Row */}
         <MetricsRow widgets={widgets} renderWidget={renderWidget} />

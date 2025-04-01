@@ -25,9 +25,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     <div className="flex items-center justify-between">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Impact Dashboard</h1>
-        <p className="text-gray-500">
-          Welcome back, {user?.name}! Here's your volunteering and impact overview.
-        </p>
       </div>
       
       <div className="flex items-center space-x-4">
