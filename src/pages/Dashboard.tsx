@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,6 +17,8 @@ import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
 import WidgetRenderer from '@/components/dashboard/WidgetRenderer';
 import { DashboardWidget } from '@/types/dashboard';
 import { toast } from '@/hooks/use-toast';
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -44,12 +45,10 @@ const Dashboard: React.FC = () => {
       title: "Dashboard Created",
       description: `${name} dashboard has been created. Add widgets to get started.`,
     });
-    // Open the add widget dialog after creating a dashboard
     setAddWidgetDialogOpen(true);
   };
   
   const handleAddWidget = (widgetType: string, title: string) => {
-    // For now, just create a simple placeholder widget
     const newWidgetId = String(mockWidgets.length + 1);
     const newWidget: DashboardWidget = {
       id: newWidgetId,
@@ -57,7 +56,6 @@ const Dashboard: React.FC = () => {
       title: title,
     };
     
-    // Add widget specific properties based on type
     switch (widgetType) {
       case 'metric':
         newWidget.value = 0;
@@ -76,13 +74,10 @@ const Dashboard: React.FC = () => {
         break;
     }
     
-    // Add widget to mock data
     mockWidgets.push(newWidget);
     
-    // Add widget to dashboard
     addWidgetToDashboard(selectedDashboardId, newWidgetId);
     
-    // Update UI
     toast({
       title: "Widget Added",
       description: `${title} widget has been added to your dashboard.`,
@@ -145,6 +140,3 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-
-// Add Button component to fix TypeScript error
-import { Button } from "@/components/ui/button";
