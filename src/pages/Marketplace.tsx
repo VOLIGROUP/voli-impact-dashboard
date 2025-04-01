@@ -1,14 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '../services/mockMarketplace';
-import { scrapeVolunteerOpportunities } from '../services/VolunteerScraperService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, RefreshCw, PlusCircle } from 'lucide-react';
+import { Search, MapPin, PlusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Marketplace as MarketplaceType } from '../types/dashboard';
 
@@ -24,32 +23,6 @@ const Marketplace: React.FC = () => {
   const [viewingCauseId, setViewingCauseId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { toast } = useToast();
-  
-  const loadScrapedOpportunities = async () => {
-    setIsLoading(true);
-    try {
-      const scrapedItems = await scrapeVolunteerOpportunities();
-      const fundraisingItems = marketplaceItems.filter(item => item.type === 'fundraising');
-      setMarketplaceItems([...scrapedItems, ...fundraisingItems]);
-      toast({
-        title: "Success",
-        description: `Loaded ${scrapedItems.length} recent volunteer opportunities`,
-      });
-    } catch (error) {
-      console.error('Error scraping volunteer opportunities:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load volunteer opportunities",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    loadScrapedOpportunities();
-  }, []);
   
   const filteredItems = marketplaceItems.filter(item => {
     const matchesSearch = 
@@ -68,6 +41,11 @@ const Marketplace: React.FC = () => {
   const handleCreateOpportunity = (newOpportunity: Partial<MarketplaceType>) => {
     // Add the new opportunity to the marketplace items
     setMarketplaceItems(prev => [newOpportunity as MarketplaceType, ...prev]);
+    
+    toast({
+      title: "Success",
+      description: "New opportunity created successfully",
+    });
   };
 
   const handleCategoryClick = (categoryId: string | null) => {
@@ -119,24 +97,6 @@ const Marketplace: React.FC = () => {
             >
               <PlusCircle className="h-4 w-4 mr-2" />
               Create Opportunity
-            </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={loadScrapedOpportunities}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh Listings
-                </>
-              )}
             </Button>
           </div>
         </div>
