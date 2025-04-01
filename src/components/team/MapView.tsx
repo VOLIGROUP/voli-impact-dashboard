@@ -2,6 +2,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { User } from '@/types/auth';
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Info } from "lucide-react";
 
 interface MapViewProps {
   users: User[];
@@ -18,6 +21,8 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [apiKey, setApiKey] = useState<string>("");
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const [scriptLoaded, setScriptLoaded] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   
   // Group users by location
   const locationGroups: Record<string, User[]> = {};
@@ -30,10 +35,69 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
     }
   });
 
+  // Load Google Maps API
+  useEffect(() => {
+    if (!apiKey) return;
+    
+    try {
+      // Clean up any existing script to avoid duplicates
+      const existingScript = document.getElementById('google-maps-script');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+      
+      // Define the callback function
+      window.initMap = () => {
+        setScriptLoaded(true);
+        setMapLoaded(true);
+      };
+      
+      // Create and add the script tag
+      const script = document.createElement('script');
+      script.id = 'google-maps-script';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => {
+        setError('Failed to load Google Maps API. Please check your API key.');
+      };
+      
+      document.head.appendChild(script);
+      
+      return () => {
+        // Clean up
+        if (document.getElementById('google-maps-script')) {
+          document.head.removeChild(script);
+        }
+        
+        if (window.google && window.google.maps) {
+          // This helps prevent issues with reloading the API
+          delete window.google.maps;
+        }
+        
+        delete window.initMap;
+      };
+    } catch (error) {
+      setError('Error setting up Google Maps: ' + (error as Error).message);
+    }
+  }, [apiKey]);
+  
+  // Initialize map when API is loaded
+  useEffect(() => {
+    if (!mapContainer.current || !scriptLoaded || !window.google || !window.google.maps) return;
+    
+    try {
+      initMap();
+    } catch (error) {
+      setError('Error initializing map: ' + (error as Error).message);
+    }
+  }, [scriptLoaded, users]);
+  
   // Function to initialize Google Maps
   const initMap = () => {
     if (!mapContainer.current || !window.google || !window.google.maps) return;
     
+    // Create a new map instance
     const map = new window.google.maps.Map(mapContainer.current, {
       center: { lat: 0, lng: 0 },
       zoom: 2,
@@ -46,6 +110,8 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
     const infoWindow = new window.google.maps.InfoWindow();
     
     // Add markers for each user
+    const markers: google.maps.Marker[] = [];
+    
     users.forEach(user => {
       if (user.coordinates) {
         const [lng, lat] = user.coordinates;
@@ -64,9 +130,10 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
             scaledSize: new window.google.maps.Size(30, 30),
             origin: new window.google.maps.Point(0, 0),
             anchor: new window.google.maps.Point(15, 15),
-            borderRadius: 15
           }
         });
+        
+        markers.push(marker);
         
         // Create popup content
         const content = `
@@ -106,41 +173,28 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
         window.google.maps.event.removeListener(listener);
       });
     }
-  };
-  
-  // Load Google Maps API
-  useEffect(() => {
-    if (!apiKey) return;
     
-    // Define the callback function
-    window.initMap = () => {
-      setMapLoaded(true);
-    };
-    
-    // Create and add the script tag
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-    
-    return () => {
-      // Clean up
-      document.head.removeChild(script);
-      delete window.initMap;
-    };
-  }, [apiKey]);
-  
-  // Initialize map when API is loaded
-  useEffect(() => {
-    if (mapLoaded) {
-      initMap();
+    // Notification that map is loaded
+    if (markers.length > 0) {
+      toast({
+        title: "Map loaded",
+        description: `Showing ${markers.length} team members across ${Object.keys(locationGroups).length} locations`,
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "No team members to display",
+        description: "No team members have location data to display on the map",
+      });
     }
-  }, [mapLoaded, users]);
+  };
   
   // Function to handle API key change
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiKey(e.target.value);
+    setMapLoaded(false);
+    setScriptLoaded(false);
+    setError(null);
   };
 
   return (
@@ -148,7 +202,7 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
       <CardContent className="p-6">
         <div className="mb-4">
           <label htmlFor="google-maps-key" className="block text-sm font-medium text-gray-700 mb-1">
-            Google Maps API Key (for demonstration purposes only)
+            Google Maps API Key
           </label>
           <input
             id="google-maps-key"
@@ -162,14 +216,39 @@ const MapView: React.FC<MapViewProps> = ({ users }) => {
             For your own app, get a key from <a href="https://console.cloud.google.com/google/maps-apis/overview" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Google Cloud Console</a>
           </p>
         </div>
+        
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <div className="h-[500px] relative rounded-lg overflow-hidden">
           {!apiKey && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-              <p className="text-gray-500">Enter a Google Maps API key to view the map</p>
+              <div className="text-center p-6">
+                <Info className="h-12 w-12 mx-auto text-gray-400 mb-2" />
+                <p className="text-gray-500 mb-2">Enter a Google Maps API key to view the map</p>
+                <p className="text-xs text-gray-400">
+                  Replace "YOUR_API_KEY" with your actual Google Maps API key
+                </p>
+              </div>
             </div>
           )}
+          
+          {apiKey && !mapLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <div className="flex flex-col items-center">
+                <div className="h-8 w-8 border-4 border-voli-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="text-gray-500">Loading Google Maps...</p>
+              </div>
+            </div>
+          )}
+          
           <div ref={mapContainer} className="absolute inset-0" />
         </div>
+        
         <div className="mt-4 flex flex-wrap gap-2">
           {Object.keys(locationGroups).map(location => (
             <div key={location} className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium">
