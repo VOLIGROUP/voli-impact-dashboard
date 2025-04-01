@@ -859,7 +859,10 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>SDG's Supporting</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select 
+                        onValueChange={(value) => field.onChange(value)} 
+                        defaultValue={typeof field.value === 'string' ? field.value : ''}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select an SDG" />
