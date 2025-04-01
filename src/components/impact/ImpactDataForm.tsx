@@ -94,9 +94,41 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
   const [totalValue, setTotalValue] = useState<number>(0);
 
   // Create form with zod validation
+  // Updated form schema to include all possible field names
   const formSchema = z.object({
     voliType: z.string({ required_error: "VOLI type is required" }),
-    // All other fields are conditionally added below
+    // Fund fields
+    fundType: z.string().optional(),
+    donationTitle: z.string().optional(),
+    causeSupported: z.string().optional(),
+    missionContributes: z.array(z.string()).optional(),
+    sdgsSupporting: z.union([z.string(), z.array(z.string())]).optional(),
+    donationValue: z.any().optional(),
+    donationDate: z.date().optional(),
+    impactOutcome: z.string().optional(),
+    proofOfCompletion: z.any().optional(),
+    projectTitle: z.string().optional(),
+    missionOfCause: z.string().optional(),
+    discountValue: z.any().optional(),
+    totalProjectValue: z.any().optional(),
+    projectStartDate: z.date().optional(),
+    projectEndDate: z.date().optional(),
+    // Time fields
+    timeType: z.string().optional(),
+    timeTitle: z.string().optional(),
+    skillsProvided: z.string().optional(),
+    hoursProvided: z.any().optional(),
+    projectValue: z.any().optional(),
+    employeeTimeValue: z.any().optional(),
+    // Blood fields
+    bloodType: z.string().optional(),
+    numberOfDonations: z.any().optional(),
+    donorLocation: z.string().optional(),
+    // Item fields
+    itemType: z.string().optional(),
+    itemName: z.string().optional(),
+    itemUnits: z.any().optional(),
+    valuePerUnit: z.any().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -376,7 +408,6 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
-                            className={cn("p-3 pointer-events-auto")}
                           />
                         </PopoverContent>
                       </Popover>
@@ -580,7 +611,6 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
-                            className={cn("p-3 pointer-events-auto")}
                           />
                         </PopoverContent>
                       </Popover>
@@ -620,7 +650,6 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
-                            className={cn("p-3 pointer-events-auto")}
                           />
                         </PopoverContent>
                       </Popover>
@@ -902,7 +931,6 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
-                            className={cn("p-3 pointer-events-auto")}
                           />
                         </PopoverContent>
                       </Popover>
@@ -942,7 +970,6 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                             selected={field.value}
                             onSelect={field.onChange}
                             initialFocus
-                            className={cn("p-3 pointer-events-auto")}
                           />
                         </PopoverContent>
                       </Popover>
@@ -1099,7 +1126,6 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                         selected={field.value}
                         onSelect={field.onChange}
                         initialFocus
-                        className={cn("p-3 pointer-events-auto")}
                       />
                     </PopoverContent>
                   </Popover>
