@@ -79,18 +79,20 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           collapsed ? 'w-16' : 'w-64'
         }`}
       >
-        <div className={`flex items-center justify-center py-6 ${collapsed ? '' : 'px-6'}`}>
+        <div className={`flex items-center justify-center py-6 ${collapsed ? 'px-2' : 'px-6'}`}>
           {user.companyLogo ? (
             <img 
               src={user.companyLogo} 
               alt={`${user.organization || 'Company'} Logo`} 
-              className={collapsed ? 'h-8 max-w-12' : 'h-10 max-w-40'} 
+              className={`object-contain max-h-10 ${
+                collapsed ? 'max-w-[40px]' : 'max-w-full w-full'
+              }`}
             />
           ) : (
             <img 
               src="/voli-logo.png" 
               alt="VOLI Logo" 
-              className={collapsed ? 'h-8' : 'h-10'} 
+              className={`object-contain ${collapsed ? 'h-8' : 'h-10'}`}
             />
           )}
         </div>
