@@ -4,7 +4,7 @@ import { mockReportTemplates, mockReports, getReportTemplateById } from '../serv
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, FileText, Download, Clock, Check, Eye, ImageIcon } from 'lucide-react';
+import { PlusCircle, FileText, Download, Clock, Check, Eye, ImageIcon, FileBarChart2, Palette, Award } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
@@ -27,9 +27,11 @@ import {
   TableRow
 } from "@/components/ui/table";
 import SocialMediaTileGenerator from '@/components/reports/SocialMediaTileGenerator';
+import { WelcomeCard } from "@/components/welcome/WelcomeCard";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const Reports: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('templates');
+  const [activeTab, setActiveTab] = useState<string>('welcome');
   const [isNewReportDialogOpen, setIsNewReportDialogOpen] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [newReportName, setNewReportName] = useState('');
@@ -188,6 +190,32 @@ const Reports: React.FC = () => {
     }
   };
 
+  const handleRoleSelect = (role: string) => {
+    switch (role) {
+      case 'reporting-analyst':
+        setActiveTab('templates');
+        toast({
+          title: "Reporting Analyst Selected",
+          description: "You can now generate and manage impact reports",
+        });
+        break;
+      case 'marketing-designer':
+        setActiveTab('social-media');
+        toast({
+          title: "Marketing & Graphic Designer Selected",
+          description: "You can now create social media tiles for your impact",
+        });
+        break;
+      case 'bcorp-consultant':
+        setActiveTab('templates'); // For now, we'll redirect to templates as B-Corp specific view isn't implemented
+        toast({
+          title: "B-Corp Consultant Selected",
+          description: "B-Corp reporting assistance activated",
+        });
+        break;
+    }
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -218,12 +246,141 @@ const Reports: React.FC = () => {
           </div>
         </div>
         
-        <Tabs defaultValue="templates" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-[600px] grid-cols-3">
+        <Tabs defaultValue="welcome" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-[800px] grid-cols-4">
+            <TabsTrigger value="welcome">AI Impact Officer</TabsTrigger>
             <TabsTrigger value="templates">Report Templates</TabsTrigger>
             <TabsTrigger value="reports">Generated Reports</TabsTrigger>
             <TabsTrigger value="social-media">Social Media</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="welcome" className="space-y-6">
+            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Your AI Impact Officer</h2>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                  Your AI Impact Officer can help with various aspects of impact reporting and communication.
+                  Select a role below to get started.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <Card className="shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-br from-blue-50 to-indigo-100 pb-4">
+                    <div className="flex justify-center mb-4">
+                      <div className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center">
+                        <FileBarChart2 className="h-8 w-8 text-blue-600" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-center">Reporting Analyst</CardTitle>
+                    <CardDescription className="text-center">
+                      Generate comprehensive impact reports
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-start">
+                        <span className="text-blue-500 mr-2 font-bold">•</span>
+                        <span>Create custom impact reports</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-blue-500 mr-2 font-bold">•</span>
+                        <span>Various templates for different needs</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-blue-500 mr-2 font-bold">•</span>
+                        <span>Export and share with stakeholders</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="pt-2">
+                    <Button 
+                      onClick={() => handleRoleSelect('reporting-analyst')} 
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Select Role
+                    </Button>
+                  </CardFooter>
+                </Card>
+
+                <Card className="shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-br from-green-50 to-emerald-100 pb-4">
+                    <div className="flex justify-center mb-4">
+                      <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
+                        <Palette className="h-8 w-8 text-green-600" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-center">Marketing & Graphic Designer</CardTitle>
+                    <CardDescription className="text-center">
+                      Create social media content for impact
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-start">
+                        <span className="text-green-500 mr-2 font-bold">•</span>
+                        <span>Generate employee spotlight tiles</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-green-500 mr-2 font-bold">•</span>
+                        <span>Branded LinkedIn & Instagram content</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-green-500 mr-2 font-bold">•</span>
+                        <span>Customize colors and content</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="pt-2">
+                    <Button 
+                      onClick={() => handleRoleSelect('marketing-designer')} 
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      Select Role
+                    </Button>
+                  </CardFooter>
+                </Card>
+
+                <Card className="shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-br from-purple-50 to-violet-100 pb-4">
+                    <div className="flex justify-center mb-4">
+                      <div className="h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center">
+                        <Award className="h-8 w-8 text-purple-600" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-center">B-Corp Consultant</CardTitle>
+                    <CardDescription className="text-center">
+                      Streamline B-Corp reporting
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-start">
+                        <span className="text-purple-500 mr-2 font-bold">•</span>
+                        <span>Extract B-Corp relevant data</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-500 mr-2 font-bold">•</span>
+                        <span>Interpret business impact metrics</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-purple-500 mr-2 font-bold">•</span>
+                        <span>One-click B-Corp report generation</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="pt-2">
+                    <Button 
+                      onClick={() => handleRoleSelect('bcorp-consultant')} 
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      Select Role
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
           
           <TabsContent value="templates" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
