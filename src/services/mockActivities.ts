@@ -84,7 +84,7 @@ export const mockActivities: Activity[] = [
     id: 'act8',
     userId: '4',
     title: 'Open Source Contribution',
-    description: 'Developed features for a nonprofit's website',
+    description: 'Developed features for a nonprofit\'s website',
     date: '2023-08-01T10:00:00Z',
     type: 'volunteer',
     points: 55,
