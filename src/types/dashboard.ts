@@ -5,13 +5,13 @@ export interface Activity {
   title: string;
   description: string;
   date: string;
-  type: 'volunteer' | 'donation' | 'event' | 'other';
+  type: 'volunteer' | 'donation' | 'event' | 'fundraising' | 'learning' | 'other';
   points: number;
   impact: string;
   hours?: number;
   amountRaised?: number;
-  location?: string; // Adding location field
-  coordinates?: [number, number]; // Adding coordinates [longitude, latitude]
+  location?: string;
+  coordinates?: [number, number]; // [longitude, latitude]
 }
 
 export interface Kudos {
@@ -86,9 +86,10 @@ export interface DashboardWidget {
   change?: number;
   period?: string;
   color?: string;
-  icon?: string;
+  icon?: 'clock' | 'users' | 'heart' | 'gift' | 'droplet';
   chartType?: 'bar' | 'line' | 'pie' | 'area';
   chartData?: Array<{ name: string; value: number; }>;
+  chartDataWithCategory?: Array<{ name: string; value: number; category: string; }>;
   activities?: Array<{ id: string; user: string; action: string; time: string; }>;
   leaderboardData?: Array<{ id: string; name: string; score: number; avatar?: string; }>;
 }
@@ -101,6 +102,8 @@ export interface Dashboard {
   userId: string;
   isDefault?: boolean;
   createdAt: string;
+  updatedAt?: string;
+  widgets?: DashboardWidget[];
 }
 
 export interface Marketplace {
@@ -124,6 +127,23 @@ export interface Marketplace {
   isPaid?: boolean;
   status?: string;
   coordinates?: [number, number]; // [longitude, latitude]
+  
+  // Additional fields used in components
+  type: 'volunteer' | 'fundraising';
+  image: string;
+  impactCategory: string;
+  sdgGoals: string[];
+  points: number;
+  commitment?: string;
+  slots?: number;
+  slotsFilled?: number;
+  goal?: number;
+  raised?: number;
+  endDate?: string;
+  requirements?: string[];
+  contactInfo?: string;
+  websiteUrl?: string;
+  createdAt?: string;
 }
 
 export interface Report {
@@ -135,6 +155,10 @@ export interface Report {
   type: string;
   status: string;
   data: any;
+  // Additional fields used in components
+  createdBy?: string;
+  downloadUrl?: string;
+  templateId?: string;
 }
 
 export interface ReportTemplate {
@@ -143,6 +167,9 @@ export interface ReportTemplate {
   description: string;
   type: string;
   previewImage: string;
+  // Additional fields used in components
+  createdAt?: string;
+  sections?: any[];
 }
 
 export interface ImpactCategory {
@@ -150,4 +177,6 @@ export interface ImpactCategory {
   name: string;
   description: string;
   icon: string;
+  // Additional field used in components
+  color: string;
 }
