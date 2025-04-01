@@ -16,7 +16,7 @@ const Index: React.FC = () => {
   }
   
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/welcome" />;
   }
   
   return <Navigate to="/login" />;

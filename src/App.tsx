@@ -16,6 +16,7 @@ import Marketplace from "./pages/Marketplace";
 import Achievements from "./pages/Achievements";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Welcome from "./pages/Welcome";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,11 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             
             {/* Protected routes */}
+            <Route path="/welcome" element={
+              <ProtectedRoute>
+                <Welcome />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
