@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import Team from "./pages/Team";
 import Marketplace from "./pages/Marketplace";
+import MarketplaceDetail from "./pages/MarketplaceDetail";
 import Achievements from "./pages/Achievements";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -79,6 +79,11 @@ const App = () => (
             <Route path="/marketplace" element={
               <ProtectedRoute>
                 <Marketplace />
+              </ProtectedRoute>
+            } />
+            <Route path="/marketplace/:id" element={
+              <ProtectedRoute>
+                <MarketplaceDetail />
               </ProtectedRoute>
             } />
             <Route path="/achievements" element={

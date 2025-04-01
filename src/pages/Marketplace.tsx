@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { mockMarketplace, mockImpactCategories } from '../services/mockData';
 import { Button } from "@/components/ui/button";
@@ -114,10 +114,27 @@ const Marketplace: React.FC = () => {
 };
 
 const MarketplaceCard = ({ item }) => {
+  const navigate = useNavigate();
   const category = mockImpactCategories.find(cat => cat.id === item.impactCategory);
   
+  const handleCardClick = () => {
+    navigate(`/marketplace/${item.id}`);
+  };
+  
+  const handleSaveClick = (e) => {
+    e.stopPropagation();
+  };
+  
+  const handleActionClick = (e) => {
+    e.stopPropagation();
+    navigate(`/marketplace/${item.id}`);
+  };
+  
   return (
-    <Card className="voli-card overflow-hidden flex flex-col">
+    <Card 
+      className="voli-card overflow-hidden flex flex-col cursor-pointer hover:shadow-md transition-all"
+      onClick={handleCardClick}
+    >
       <div className="relative h-40 overflow-hidden">
         <img 
           src={item.image} 
@@ -190,11 +207,20 @@ const MarketplaceCard = ({ item }) => {
       </CardContent>
       
       <CardFooter className="px-4 py-3 border-t border-gray-100 flex justify-between">
-        <Button variant="outline" size="sm" className="w-1/2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-1/2"
+          onClick={handleSaveClick}
+        >
           <Heart className="h-4 w-4 mr-2" />
           Save
         </Button>
-        <Button size="sm" className="w-1/2 bg-voli-primary hover:bg-voli-secondary text-black">
+        <Button 
+          size="sm" 
+          className="w-1/2 bg-voli-primary hover:bg-voli-secondary text-black"
+          onClick={handleActionClick}
+        >
           {item.type === 'volunteer' ? 'Sign Up' : 'Donate'}
         </Button>
       </CardFooter>

@@ -12,6 +12,7 @@ interface WelcomeCardProps {
   to: string;
   buttonText: string;
   variant?: 'default' | 'admin' | 'user';
+  onClick?: () => void;
 }
 
 const WelcomeCard: React.FC<WelcomeCardProps> = ({ 
@@ -20,7 +21,8 @@ const WelcomeCard: React.FC<WelcomeCardProps> = ({
   icon, 
   to, 
   buttonText,
-  variant = 'default'
+  variant = 'default',
+  onClick
 }) => {
   const getBgColor = () => {
     switch (variant) {
@@ -30,6 +32,13 @@ const WelcomeCard: React.FC<WelcomeCardProps> = ({
         return 'bg-gradient-to-br from-green-100 to-emerald-100 border-green-200';
       default:
         return 'bg-gradient-to-br from-gray-50 to-gray-100';
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
     }
   };
 
@@ -44,7 +53,7 @@ const WelcomeCard: React.FC<WelcomeCardProps> = ({
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full gap-2 justify-between">
-          <Link to={to}>
+          <Link to={to} onClick={handleClick}>
             {buttonText}
             <ArrowRight size={16} />
           </Link>
