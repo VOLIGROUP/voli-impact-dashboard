@@ -37,13 +37,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             value={selectedDashboardId}
             onValueChange={setSelectedDashboardId}
           >
-            <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="Select a dashboard" />
+            <SelectTrigger className="w-[220px] justify-between">
+              <SelectValue placeholder="Select a dashboard" className="text-left" />
             </SelectTrigger>
             <SelectContent>
               {dashboards.map((dashboard) => (
-                <SelectItem key={dashboard.id} value={dashboard.id}>
-                  {dashboard.name}
+                <SelectItem key={dashboard.id} value={dashboard.id} className="flex items-center justify-between">
+                  <span className="text-left">{dashboard.name}</span>
                   {dashboard.isDefault && (
                     <span className="ml-2 text-xs text-gray-500">(Default)</span>
                   )}
