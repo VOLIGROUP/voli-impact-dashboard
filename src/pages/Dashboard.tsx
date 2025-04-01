@@ -10,7 +10,7 @@ import {
   addWidgetToDashboard,
   removeWidgetFromDashboard
 } from '../services/mockDashboards';
-import { mockWidgets, getWidgetById } from '../services/mockWidgets';
+import { mockWidgets } from '../services/mockWidgets';
 import AddImpactDataDialog from '@/components/impact/AddImpactDataDialog';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardContent from '@/components/dashboard/DashboardContent';
