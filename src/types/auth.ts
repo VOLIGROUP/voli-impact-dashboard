@@ -1,15 +1,4 @@
 
-export interface Skill {
-  id: string;
-  name: string;
-  level: number;
-}
-
-export interface Interest {
-  id: string;
-  name: string;
-}
-
 export interface User {
   id: string;
   email: string;
@@ -26,10 +15,6 @@ export interface User {
   lastActive: string;
   location?: string;
   coordinates?: [number, number]; // [longitude, latitude]
-  skills?: Skill[];
-  interests?: Interest[];
-  sdgs?: string[];
-  bio?: string;
 }
 
 export interface AuthContextType {

@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { mockUsers } from '../services/mockData';
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +11,7 @@ import MapView from '../components/team/MapView';
 import TeamByLocation from '../components/team/TeamByLocation';
 import UserProfileDialog from '../components/team/UserProfileDialog';
 import EmployeesTab from '../components/team/EmployeesTab';
-import TeamPerformanceComparison from '@/components/team/TeamPerformanceComparison';
+import TeamPerformanceComparison from '../components/team/TeamPerformanceComparison';
 import { useToast } from "@/hooks/use-toast";
 
 const Team: React.FC = () => {
@@ -23,27 +24,25 @@ const Team: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const usersByLocation = useMemo(() => {
-    const locationMap: Record<string, User[]> = {};
-    
-    mockUsers.forEach(user => {
-      if (user.location) {
-        if (!locationMap[user.location]) {
-          locationMap[user.location] = [];
-        }
-        locationMap[user.location].push(user);
-      }
-    });
-    
-    return locationMap;
-  }, []);
-
+  // Filter users based on search query
   const filteredUsers = mockUsers.filter(user => 
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.location?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Group users by location
+  const usersByLocation: Record<string, typeof mockUsers> = {};
+  
+  filteredUsers.forEach(user => {
+    if (user.location) {
+      if (!usersByLocation[user.location]) {
+        usersByLocation[user.location] = [];
+      }
+      usersByLocation[user.location].push(user);
+    }
+  });
 
   const toggleLocationExpand = (location: string) => {
     setExpandedLocations(prev => ({
@@ -116,6 +115,7 @@ const Team: React.FC = () => {
                   </div>
                 </div>
                 
+                {/* Add the team performance comparison component */}
                 {Object.keys(usersByLocation).length > 1 && (
                   <TeamPerformanceComparison usersByLocation={usersByLocation} />
                 )}

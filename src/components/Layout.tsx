@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,7 +20,6 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import UserProfileDialog from "./profile/UserProfileDialog";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -52,7 +52,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   
   const handleLogout = () => {
     logout();
@@ -77,6 +76,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
       <div 
         className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out ${
           collapsed ? 'w-16' : 'w-64'
@@ -99,6 +99,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             />
           )}
           
+          {/* Circular collapse button at the top */}
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-700 transition-colors"
@@ -137,9 +138,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Navbar */}
         <header className="bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between">
           <div className="flex items-center space-x-4 w-1/2">
+            {/* Toggle button for mobile/tablet */}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -173,10 +177,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <span className="font-medium text-sm">{user.name}</span>
                 <span className="text-gray-500 text-xs">{user.role}</span>
               </div>
-              <Avatar 
-                className="cursor-pointer hover:ring-2 hover:ring-voli-primary hover:ring-opacity-50 transition-all"
-                onClick={() => setProfileOpen(true)}
-              >
+              <Avatar>
                 <AvatarImage src={user.avatarUrl} />
                 <AvatarFallback>
                   {user.name.split(' ').map(n => n[0]).join('')}
@@ -186,15 +187,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </header>
 
+        {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
           {children}
         </main>
       </div>
-      
-      <UserProfileDialog 
-        isOpen={profileOpen} 
-        onClose={() => setProfileOpen(false)} 
-      />
     </div>
   );
 };

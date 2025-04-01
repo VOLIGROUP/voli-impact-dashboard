@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { MapPin, Calendar, Users, DollarSign, Clock, Heart, Share2, Copy, X } from 'lucide-react';
-import { mockImpactCategories, getImpactCategoryById, getSDGsForMarketplaceItem } from "../../services/mockMarketplace";
-import { Marketplace, ImpactCategory } from '../../types/dashboard';
+import { mockImpactCategories, getSDGsForMarketplaceItem } from "../../services/mockMarketplace";
+import { Marketplace } from '../../types/dashboard';
 import { 
   Dialog,
   DialogContent,
@@ -134,7 +134,7 @@ const MarketplaceCard: React.FC<MarketplaceCardProps> = ({ item, readOnly = fals
           
           {sdgCategories && sdgCategories.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
-              {sdgCategories.slice(0, 3).map((sdg: ImpactCategory) => (
+              {sdgCategories.slice(0, 3).map((sdg) => (
                 <Badge 
                   key={sdg.id}
                   className="text-xs px-1.5 py-0.5"
