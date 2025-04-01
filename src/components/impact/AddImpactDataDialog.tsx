@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Upload } from "lucide-react";
 import ImpactDataForm from "./ImpactDataForm";
@@ -16,6 +16,9 @@ const AddImpactDataDialog = ({ open, onOpenChange }: AddImpactDataDialogProps) =
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Add Impact Data</DialogTitle>
+          <DialogDescription>
+            Use this form to add new impact data to your dashboard
+          </DialogDescription>
         </DialogHeader>
         
         <Tabs defaultValue="form" className="mt-4">
