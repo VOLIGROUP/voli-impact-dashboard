@@ -13,7 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
-  Search
+  Search,
+  Home
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -61,6 +62,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
   
   const navigationItems = [
+    { icon: <Home size={20} />, label: 'Welcome', to: '/welcome' },
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', to: '/dashboard' },
     { icon: <FileBarChart2 size={20} />, label: 'Reports', to: '/reports' },
     { icon: <Users size={20} />, label: 'Team', to: '/team' },
