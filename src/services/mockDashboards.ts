@@ -1,4 +1,3 @@
-
 import { Dashboard } from '../types/dashboard';
 import { mockWidgets } from './mockWidgets';
 
@@ -73,6 +72,15 @@ export const addWidgetToDashboard = (dashboardId: string, widgetId: string): voi
   const dashboard = getDashboardById(dashboardId);
   if (dashboard) {
     dashboard.widgets.push(widgetId);
+    dashboard.updatedAt = new Date().toISOString();
+  }
+};
+
+// Function to remove a widget from a dashboard
+export const removeWidgetFromDashboard = (dashboardId: string, widgetId: string): void => {
+  const dashboard = getDashboardById(dashboardId);
+  if (dashboard) {
+    dashboard.widgets = dashboard.widgets.filter(id => id !== widgetId);
     dashboard.updatedAt = new Date().toISOString();
   }
 };

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,7 +6,8 @@ import {
   getWidgetsForDashboard, 
   mockDashboards,
   addDashboard,
-  addWidgetToDashboard
+  addWidgetToDashboard,
+  removeWidgetFromDashboard
 } from '../services/mockDashboards';
 import { mockWidgets } from '../services/mockWidgets';
 import AddImpactDataDialog from '@/components/impact/AddImpactDataDialog';
@@ -15,7 +15,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import CreateDashboardDialog from '@/components/dashboard/CreateDashboardDialog';
 import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
-import WidgetRenderer from '@/components/dashboard/WidgetRenderer';
+import WidgetWithContextMenu from '@/components/dashboard/WidgetWithContextMenu';
 import { DashboardWidget } from '@/types/dashboard';
 import { toast } from '@/hooks/use-toast';
 import { Button } from "@/components/ui/button";
@@ -59,10 +59,8 @@ const Dashboard: React.FC = () => {
       title: title,
     };
     
-    // Populate widget with real data based on type
     switch (widgetType) {
       case 'metric':
-        // Total volunteer hours as default metric
         newWidget.value = mockActivities.reduce((sum, activity) => sum + (activity.hours || 0), 0);
         newWidget.prefix = '';
         newWidget.suffix = ' hrs';
@@ -74,7 +72,6 @@ const Dashboard: React.FC = () => {
         
       case 'chart':
         newWidget.chartType = 'bar';
-        // Use real activity type distribution
         const activityTypeDistribution = getActivitiesByType(mockActivities);
         newWidget.chartData = [
           { name: 'Volunteer', value: activityTypeDistribution.volunteer || 0 },
@@ -86,7 +83,6 @@ const Dashboard: React.FC = () => {
         break;
         
       case 'activity':
-        // Use a subset of recent activities
         newWidget.activities = [
           { id: '1', user: 'Sarah Johnson', action: 'donated 2 units of blood at Red Cross', time: '2 hours ago' },
           { id: '2', user: 'Michael Chen', action: 'donated 50 books to local library', time: '5 hours ago' },
@@ -95,7 +91,6 @@ const Dashboard: React.FC = () => {
         break;
         
       case 'leaderboard':
-        // Use a subset of the leaderboard data
         newWidget.leaderboardData = [
           { id: '1', name: 'Jessica Martinez', score: 48, avatar: 'https://i.pravatar.cc/150?img=1' },
           { id: '2', name: 'Daniel Wong', score: 42, avatar: 'https://i.pravatar.cc/150?img=2' },
@@ -111,6 +106,15 @@ const Dashboard: React.FC = () => {
     toast({
       title: "Widget Added",
       description: `${title} widget has been added to your dashboard.`,
+    });
+  };
+  
+  const handleDeleteWidget = (widgetId: string) => {
+    removeWidgetFromDashboard(selectedDashboardId, widgetId);
+    
+    toast({
+      title: "Widget Deleted",
+      description: "The widget has been removed from your dashboard.",
     });
   };
   
@@ -131,7 +135,13 @@ const Dashboard: React.FC = () => {
         {selectedDashboard && widgets.length > 0 ? (
           <DashboardContent 
             widgets={widgets} 
-            renderWidget={WidgetRenderer} 
+            renderWidget={(widget) => (
+              <WidgetWithContextMenu 
+                widget={widget} 
+                onDeleteWidget={handleDeleteWidget}
+                isDeletable={parseInt(widget.id) > 12}
+              />
+            )} 
           />
         ) : selectedDashboard && widgets.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 bg-white rounded-lg shadow">
