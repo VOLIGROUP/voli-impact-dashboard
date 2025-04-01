@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -87,7 +88,7 @@ const Marketplace: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="md:max-w-lg">
             <h1 className="text-2xl font-bold text-gray-900">Impact Marketplace</h1>
-            <p className="text-xs text-gray-500">
+            <p className="text-gray-500">
               Discover volunteering opportunities and fundraising campaigns aligned with the UN Sustainable Development Goals
             </p>
           </div>
