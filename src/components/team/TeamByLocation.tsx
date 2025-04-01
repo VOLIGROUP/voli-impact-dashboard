@@ -14,9 +14,10 @@ interface TeamByLocationProps {
   users: User[];
   expanded: boolean;
   onToggle: () => void;
+  onViewProfile: (userId: string) => void;
 }
 
-const TeamByLocation: React.FC<TeamByLocationProps> = ({ location, users, expanded, onToggle }) => {
+const TeamByLocation: React.FC<TeamByLocationProps> = ({ location, users, expanded, onToggle, onViewProfile }) => {
   return (
     <div className="my-6">
       <div className="flex items-center justify-between mb-4">
@@ -93,7 +94,12 @@ const TeamByLocation: React.FC<TeamByLocationProps> = ({ location, users, expand
                 </div>
                 
                 <div className="mt-4 flex space-x-2">
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200"
+                    onClick={() => onViewProfile(user.id)}
+                  >
                     View Profile
                   </Button>
                   <Button variant="outline" size="sm" className="w-8 p-0">

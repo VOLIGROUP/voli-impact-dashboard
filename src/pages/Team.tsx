@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Plus, MapPin, Users } from 'lucide-react';
 import MapView from '../components/team/MapView';
 import TeamByLocation from '../components/team/TeamByLocation';
+import UserProfileDialog from '../components/team/UserProfileDialog';
+import { useToast } from "@/hooks/use-toast";
 
 const Team: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +19,8 @@ const Team: React.FC = () => {
     'New York': false,
     'London': false
   });
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Filter users based on search query
   const filteredUsers = mockUsers.filter(user => 
@@ -43,6 +47,14 @@ const Team: React.FC = () => {
       ...prev,
       [location]: !prev[location]
     }));
+  };
+  
+  const handleOpenUserProfile = (userId: string) => {
+    setSelectedUserId(userId);
+  };
+  
+  const handleCloseUserProfile = () => {
+    setSelectedUserId(null);
   };
 
   return (
@@ -106,6 +118,7 @@ const Team: React.FC = () => {
                         users={users} 
                         expanded={expandedLocations[location] || false}
                         onToggle={() => toggleLocationExpand(location)}
+                        onViewProfile={handleOpenUserProfile}
                       />
                     ))}
                   </div>
@@ -119,10 +132,18 @@ const Team: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="map">
-            <MapView users={filteredUsers} />
+            <MapView users={filteredUsers} onViewProfile={handleOpenUserProfile} />
           </TabsContent>
         </Tabs>
       </div>
+      
+      {selectedUserId && (
+        <UserProfileDialog 
+          userId={selectedUserId}
+          isOpen={!!selectedUserId}
+          onClose={handleCloseUserProfile}
+        />
+      )}
     </Layout>
   );
 };

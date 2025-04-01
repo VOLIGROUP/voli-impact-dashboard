@@ -69,6 +69,33 @@ export interface Activity {
   points: number;
 }
 
+// User Profile Types
+export interface Skill {
+  id: string;
+  name: string;
+  level: number; // 1-5
+}
+
+export interface Interest {
+  id: string;
+  name: string;
+}
+
+export interface Kudos {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  message: string;
+  date: string;
+  seen: boolean;
+}
+
+export interface UserRanking {
+  rank: number;
+  title: string;
+  description: string;
+}
+
 // Marketplace Types
 export interface ImpactCategory {
   id: string;
