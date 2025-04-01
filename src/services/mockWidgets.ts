@@ -1,6 +1,4 @@
-
-import { DashboardWidget } from '../types/dashboard';
-import { groupActivitiesByMonth, getActivitiesByType, calculateHoursByType, calculateAmountsByType } from './activityAnalytics';
+import { DashboardWidget } from '@/types/dashboard';
 import { mockActivities } from './mockActivities';
 
 // Prepare activity data for charts

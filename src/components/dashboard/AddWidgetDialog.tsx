@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({
   const [useExistingData, setUseExistingData] = useState(false);
   const [chartType, setChartType] = useState<'bar' | 'line' | 'pie' | 'area'>('bar');
   
-  // Generate preview widget whenever form values change
   useEffect(() => {
     if (!widgetType) {
       setPreviewWidget(null);
@@ -44,7 +42,6 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({
       title: widgetTitle || 'Widget Preview',
     };
 
-    // Set default data based on widget type
     switch (widgetType) {
       case 'metric':
         widget.value = useExistingData ? 

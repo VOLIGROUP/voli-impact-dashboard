@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
-import { mockActivities } from '../services/mockData';
+import { mockActivities } from '../services/mockActivities';
 import { 
   Table, 
   TableBody, 
