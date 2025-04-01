@@ -5,6 +5,7 @@ export interface DashboardWidget {
   type: 'metric' | 'chart' | 'activity' | 'leaderboard';
   title: string;
   color?: string;
+  icon?: 'clock' | 'users' | 'heart' | 'gift' | 'droplet';
   
   // For metric widgets
   value?: number;

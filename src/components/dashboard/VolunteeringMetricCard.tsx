@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowDown, ArrowUp, Clock } from 'lucide-react';
+import { ArrowDown, ArrowUp, Clock, Users, Heart, Gift, Droplet } from 'lucide-react';
 
 interface VolunteeringMetricCardProps {
   title: string;
@@ -10,6 +10,7 @@ interface VolunteeringMetricCardProps {
   change?: number;
   period?: string;
   color?: string;
+  icon?: 'clock' | 'users' | 'heart' | 'gift' | 'droplet';
 }
 
 const VolunteeringMetricCard: React.FC<VolunteeringMetricCardProps> = ({
@@ -19,7 +20,8 @@ const VolunteeringMetricCard: React.FC<VolunteeringMetricCardProps> = ({
   suffix = '',
   change,
   period,
-  color = 'voli-primary'
+  color = 'voli-primary',
+  icon = 'clock'
 }) => {
   const formatValue = () => {
     if (value >= 1000) {
@@ -28,11 +30,28 @@ const VolunteeringMetricCard: React.FC<VolunteeringMetricCardProps> = ({
     return value;
   };
 
+  const renderIcon = () => {
+    switch (icon) {
+      case 'clock':
+        return <Clock className={`h-5 w-5 text-${color}`} />;
+      case 'users':
+        return <Users className={`h-5 w-5 text-${color}`} />;
+      case 'heart':
+        return <Heart className={`h-5 w-5 text-${color}`} />;
+      case 'gift':
+        return <Gift className={`h-5 w-5 text-${color}`} />;
+      case 'droplet':
+        return <Droplet className={`h-5 w-5 text-${color}`} />;
+      default:
+        return <Clock className={`h-5 w-5 text-${color}`} />;
+    }
+  };
+
   return (
     <Card className="voli-card overflow-hidden border-t-4" style={{ borderTopColor: `var(--${color})` }}>
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
         <CardTitle className="text-sm font-medium text-gray-500">{title}</CardTitle>
-        <Clock className={`h-5 w-5 text-${color}`} />
+        {renderIcon()}
       </CardHeader>
       <CardContent>
         <div className="text-3xl font-bold">

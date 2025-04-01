@@ -29,23 +29,9 @@ const Dashboard: React.FC = () => {
   const renderWidget = (widget: DashboardWidget) => {
     switch (widget.type) {
       case 'metric':
-        // Use VolunteeringMetricCard for the first metric (Total Volunteering Hours)
-        if (widget.id === '1') {
-          return (
-            <VolunteeringMetricCard
-              key={widget.id}
-              title={widget.title}
-              value={widget.value || 0}
-              prefix={widget.prefix}
-              suffix={widget.suffix}
-              change={widget.change}
-              period={widget.period}
-              color={widget.color}
-            />
-          );
-        }
+        // Use VolunteeringMetricCard for all metrics with the appropriate icon
         return (
-          <MetricCard
+          <VolunteeringMetricCard
             key={widget.id}
             title={widget.title}
             value={widget.value || 0}
@@ -54,6 +40,7 @@ const Dashboard: React.FC = () => {
             change={widget.change}
             period={widget.period}
             color={widget.color}
+            icon={widget.icon as any}
           />
         );
         
@@ -96,9 +83,9 @@ const Dashboard: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Volunteering Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Impact Dashboard</h1>
             <p className="text-gray-500">
-              Welcome back, {user?.name}! Here's your volunteering impact overview.
+              Welcome back, {user?.name}! Here's your volunteering and impact overview.
             </p>
           </div>
           
@@ -131,7 +118,7 @@ const Dashboard: React.FC = () => {
               className="bg-voli-primary hover:bg-voli-secondary text-black"
             >
               <Clock className="h-4 w-4 mr-2" />
-              Log Hours
+              Log Impact
             </Button>
             
             <Button className="bg-voli-primary hover:bg-voli-secondary text-black">
@@ -167,23 +154,33 @@ const Dashboard: React.FC = () => {
                 <TabsList>
                   <TabsTrigger value="grid">
                     <LayoutGrid className="h-4 w-4 mr-2" />
-                    Grid View
+                    Dashboard View
                   </TabsTrigger>
                 </TabsList>
               </div>
               
-              <TabsContent value="grid" className="space-y-4">
-                {/* Metrics Row */}
+              <TabsContent value="grid" className="space-y-6">
+                {/* Metrics Row - First Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {widgets
                     .filter(widget => widget.type === 'metric')
+                    .slice(0, 4)
                     .map(widget => renderWidget(widget))}
                 </div>
                 
-                {/* Charts Row */}
+                {/* Charts Row - First Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {widgets
                     .filter(widget => widget.type === 'chart')
+                    .slice(0, 2)
+                    .map(widget => renderWidget(widget))}
+                </div>
+                
+                {/* Charts Row - Second Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {widgets
+                    .filter(widget => widget.type === 'chart')
+                    .slice(2, 4)
                     .map(widget => renderWidget(widget))}
                 </div>
                 
