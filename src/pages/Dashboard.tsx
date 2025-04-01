@@ -2,11 +2,17 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../contexts/AuthContext';
-import { getDefaultDashboard, getWidgetsForDashboard, mockDashboards } from '../services/mockData';
+import { 
+  getDefaultDashboard, 
+  getWidgetsForDashboard, 
+  mockDashboards,
+  mockWidgets 
+} from '../services/mockData';
 import AddImpactDataDialog from '@/components/impact/AddImpactDataDialog';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import WidgetRenderer from '@/components/dashboard/WidgetRenderer';
+import { DashboardWidget } from '@/types/dashboard';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -15,7 +21,11 @@ const Dashboard: React.FC = () => {
   );
   const [impactDialogOpen, setImpactDialogOpen] = useState(false);
   
-  const widgets = getWidgetsForDashboard(selectedDashboardId);
+  const widgetIds = getWidgetsForDashboard(selectedDashboardId);
+  const widgets = widgetIds
+    .map(id => mockWidgets.find(w => w.id === id))
+    .filter((widget): widget is DashboardWidget => widget !== undefined);
+  
   const selectedDashboard = mockDashboards.find(d => d.id === selectedDashboardId);
   
   return (
