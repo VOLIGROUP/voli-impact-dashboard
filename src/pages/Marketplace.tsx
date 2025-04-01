@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '../services/mockMarketplace';
+import { mockMarketplace, mockImpactCategories, getMarketplaceItemById, mockCharities } from '../services/mockMarketplace';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,6 +11,7 @@ import { Search, MapPin, PlusCircle, Filter } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Marketplace as MarketplaceType } from '../types/dashboard';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 import MarketplaceCard from '../components/marketplace/MarketplaceCard';
 import CauseProfile from '../components/marketplace/CauseProfile';
@@ -18,6 +19,7 @@ import CreateOpportunityDialog from '../components/marketplace/CreateOpportunity
 
 const Marketplace: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceType[]>(mockMarketplace);
@@ -25,6 +27,7 @@ const Marketplace: React.FC = () => {
   const [viewingCauseId, setViewingCauseId] = useState<string | null>(
     location.state?.viewCauseId || null
   );
+  const [viewingCharityId, setViewingCharityId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const { toast } = useToast();
@@ -70,6 +73,10 @@ const Marketplace: React.FC = () => {
     setFilterOpen(false);
   };
 
+  const handleCharityClick = (charityId: string) => {
+    setViewingCharityId(charityId);
+  };
+
   if (viewingCauseId) {
     return (
       <Layout>
@@ -78,6 +85,93 @@ const Marketplace: React.FC = () => {
           opportunities={marketplaceItems}
           onBackClick={() => setViewingCauseId(null)}
         />
+      </Layout>
+    );
+  }
+
+  if (viewingCharityId) {
+    const charity = mockCharities.find(c => c.id === viewingCharityId);
+    const charityOpportunities = marketplaceItems.filter(
+      item => item.organization.toLowerCase() === charity?.name.toLowerCase()
+    );
+    
+    return (
+      <Layout>
+        <div className="space-y-6">
+          <div className="flex items-center mb-6">
+            <Button 
+              variant="ghost" 
+              className="mr-2" 
+              onClick={() => setViewingCharityId(null)}
+            >
+              ← Back
+            </Button>
+            <h1 className="text-2xl font-bold">{charity?.name}</h1>
+          </div>
+          
+          <div className="flex items-start gap-6">
+            <div className="w-1/3">
+              <Card className="mb-6">
+                <CardHeader>
+                  <div className="flex justify-center mb-4">
+                    <img 
+                      src={charity?.logo} 
+                      alt={charity?.name} 
+                      className="h-24 w-24 object-contain" 
+                    />
+                  </div>
+                  <CardTitle>{charity?.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 mb-4">{charity?.mission}</p>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {charity?.sdgFocus.map(sdgId => {
+                      const category = mockImpactCategories.find(c => c.id === sdgId);
+                      return (
+                        <Badge
+                          key={sdgId}
+                          style={{
+                            backgroundColor: category?.color,
+                            color: 'white'
+                          }}
+                          className="text-xs"
+                        >
+                          {category?.name}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => window.open(charity?.website, '_blank')}
+                  >
+                    Visit Website
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+            
+            <div className="w-2/3">
+              <h2 className="text-xl font-semibold mb-4">Opportunities from {charity?.name}</h2>
+              {charityOpportunities.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {charityOpportunities.map(item => (
+                    <MarketplaceCard 
+                      key={item.id} 
+                      item={item} 
+                      readOnly={!isLoggedIn}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 py-4">No opportunities found from this charity.</p>
+              )}
+            </div>
+          </div>
+        </div>
       </Layout>
     );
   }
@@ -116,9 +210,7 @@ const Marketplace: React.FC = () => {
           </div>
         </div>
         
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-gray-700">Filter by UN Sustainable Development Goals</h2>
-          
+        <div className="flex justify-end">
           <div className="flex items-center gap-2">
             {selectedCategory && (
               <Button 
@@ -199,6 +291,7 @@ const Marketplace: React.FC = () => {
             <TabsTrigger value="all">All Opportunities</TabsTrigger>
             <TabsTrigger value="volunteer">Volunteer</TabsTrigger>
             <TabsTrigger value="fundraising">Fundraising</TabsTrigger>
+            <TabsTrigger value="charities">Charities</TabsTrigger>
           </TabsList>
           
           <TabsContent value="all" className="space-y-6">
@@ -252,6 +345,60 @@ const Marketplace: React.FC = () => {
                   <p className="text-gray-500">No fundraising campaigns found. Try adjusting your filters.</p>
                 </div>
               )}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="charities" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {mockCharities.map((charity) => (
+                <Card 
+                  key={charity.id} 
+                  className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => handleCharityClick(charity.id)}
+                >
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 flex-shrink-0">
+                        <img 
+                          src={charity.logo} 
+                          alt={charity.name} 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{charity.name}</CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-2">
+                    <CardDescription className="line-clamp-3 mb-4">
+                      {charity.mission}
+                    </CardDescription>
+                    <div className="flex flex-wrap gap-1.5">
+                      {charity.sdgFocus.slice(0, 3).map(sdgId => {
+                        const category = mockImpactCategories.find(c => c.id === sdgId);
+                        return (
+                          <Badge
+                            key={sdgId}
+                            style={{
+                              backgroundColor: category?.color,
+                              color: 'white'
+                            }}
+                            className="text-xs"
+                          >
+                            {category?.name}
+                          </Badge>
+                        );
+                      })}
+                      {charity.sdgFocus.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{charity.sdgFocus.length - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
         </Tabs>

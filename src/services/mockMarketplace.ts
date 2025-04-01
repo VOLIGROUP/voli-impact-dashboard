@@ -1,5 +1,5 @@
 
-import { ImpactCategory, Marketplace } from '../types/dashboard';
+import { Charity, ImpactCategory, Marketplace } from '../types/dashboard';
 
 // Mock Impact Categories (SDGs)
 export const mockImpactCategories: ImpactCategory[] = [
@@ -20,6 +20,64 @@ export const mockImpactCategories: ImpactCategory[] = [
   { id: 'sdg15', name: 'Life on Land', color: '#56C02B' },
   { id: 'sdg16', name: 'Peace, Justice and Strong Institutions', color: '#00689D' },
   { id: 'sdg17', name: 'Partnerships for the Goals', color: '#19486A' },
+];
+
+// Mock Charities
+export const mockCharities: Charity[] = [
+  {
+    id: 'charity1',
+    name: 'Green Earth Initiative',
+    logo: 'https://images.unsplash.com/photo-1569307371366-eb2e4efe5122?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Z3JlZW58ZW58MHwyfDB8fHww',
+    mission: 'Dedicated to environmental conservation and sustainable practices across urban and rural communities. We focus on creating green spaces and educating communities on sustainable living.',
+    website: 'https://example.com/greenearth',
+    sdgFocus: ['sdg11', 'sdg13', 'sdg15'],
+    contactEmail: 'info@greenearth.org'
+  },
+  {
+    id: 'charity2',
+    name: 'Water For All',
+    logo: 'https://images.unsplash.com/photo-1538300342682-cf57afb97285?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8d2F0ZXJ8ZW58MHx8MHx8fDA%3D',
+    mission: 'Providing clean water access to communities in developing regions through infrastructure projects, education, and sustainable water management solutions.',
+    website: 'https://example.com/waterforall',
+    sdgFocus: ['sdg3', 'sdg6'],
+    contactEmail: 'contact@waterforall.org'
+  },
+  {
+    id: 'charity3',
+    name: 'Readers of Tomorrow',
+    logo: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D',
+    mission: 'Promoting literacy and education across all age groups through tutoring programs, book donations, and educational resources to underserved communities.',
+    website: 'https://example.com/readersoftomorrow',
+    sdgFocus: ['sdg4', 'sdg10'],
+    contactEmail: 'help@readersoftomorrow.org'
+  },
+  {
+    id: 'charity4',
+    name: 'Play It Forward',
+    logo: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3BvcnR8ZW58MHx8MHx8fDA%3D',
+    mission: 'Supporting youth development through sports by providing equipment, coaching, and safe play spaces to children in underserved communities.',
+    website: 'https://example.com/playitforward',
+    sdgFocus: ['sdg3', 'sdg10', 'sdg11'],
+    contactEmail: 'info@playitforward.org'
+  },
+  {
+    id: 'charity5',
+    name: 'Homes For Everyone',
+    logo: 'https://images.unsplash.com/photo-1501183638710-841dd1904471?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG9tZXxlbnwwfHwwfHx8MA%3D%3D',
+    mission: 'Building affordable housing and providing shelter solutions for families in need, while advocating for housing equality and community development.',
+    website: 'https://example.com/homesforeveryone',
+    sdgFocus: ['sdg1', 'sdg10', 'sdg11'],
+    contactEmail: 'build@homesforeveryone.org'
+  },
+  {
+    id: 'charity6',
+    name: 'Future Power Initiative',
+    logo: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29sYXJ8ZW58MHx8MHx8fDA%3D',
+    mission: 'Advancing renewable energy adoption through community-based projects, technology research, and education on sustainable energy practices.',
+    website: 'https://example.com/futurepower',
+    sdgFocus: ['sdg7', 'sdg9', 'sdg13'],
+    contactEmail: 'connect@futurepower.org'
+  }
 ];
 
 // Mock Marketplace Items
@@ -147,6 +205,10 @@ export const getImpactCategoryById = (id: string): ImpactCategory | undefined =>
 
 export const getMarketplaceItemById = (id: string): Marketplace | undefined => {
   return mockMarketplace.find(item => item.id === id);
+};
+
+export const getCharityById = (id: string): Charity | undefined => {
+  return mockCharities.find(charity => charity.id === id);
 };
 
 // Get SDG goals data for a marketplace item

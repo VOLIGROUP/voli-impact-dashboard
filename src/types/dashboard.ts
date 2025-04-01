@@ -76,6 +76,16 @@ export interface ImpactCategory {
   color: string;
 }
 
+export interface Charity {
+  id: string;
+  name: string;
+  logo: string;
+  mission: string;
+  website: string;
+  sdgFocus: string[];
+  contactEmail: string;
+}
+
 export interface Marketplace {
   id: string;
   type: 'volunteer' | 'fundraising';
