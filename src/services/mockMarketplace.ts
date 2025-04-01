@@ -1,222 +1,238 @@
 
-import { Charity, ImpactCategory, Marketplace } from '../types/dashboard';
+import { ImpactCategory, Charity, Marketplace } from '../types/dashboard';
 
-// Mock Impact Categories (SDGs)
+// Mock Impact Categories
 export const mockImpactCategories: ImpactCategory[] = [
-  { id: 'sdg1', name: 'No Poverty', color: '#e5243b' },
-  { id: 'sdg2', name: 'Zero Hunger', color: '#DDA63A' },
-  { id: 'sdg3', name: 'Good Health and Well-being', color: '#4C9F38' },
-  { id: 'sdg4', name: 'Quality Education', color: '#C5192D' },
-  { id: 'sdg5', name: 'Gender Equality', color: '#FF3A21' },
-  { id: 'sdg6', name: 'Clean Water and Sanitation', color: '#26BDE2' },
-  { id: 'sdg7', name: 'Affordable and Clean Energy', color: '#FCC30B' },
-  { id: 'sdg8', name: 'Decent Work and Economic Growth', color: '#A21942' },
-  { id: 'sdg9', name: 'Industry, Innovation and Infrastructure', color: '#FD6925' },
-  { id: 'sdg10', name: 'Reduced Inequalities', color: '#DD1367' },
-  { id: 'sdg11', name: 'Sustainable Cities and Communities', color: '#FD9D24' },
-  { id: 'sdg12', name: 'Responsible Consumption and Production', color: '#BF8B2E' },
-  { id: 'sdg13', name: 'Climate Action', color: '#3F7E44' },
-  { id: 'sdg14', name: 'Life Below Water', color: '#0A97D9' },
-  { id: 'sdg15', name: 'Life on Land', color: '#56C02B' },
-  { id: 'sdg16', name: 'Peace, Justice and Strong Institutions', color: '#00689D' },
-  { id: 'sdg17', name: 'Partnerships for the Goals', color: '#19486A' },
+  { id: '1', name: 'Education', description: 'Supporting educational initiatives', icon: 'book', color: 'blue-500' },
+  { id: '2', name: 'Environment', description: 'Protecting our planet', icon: 'leaf', color: 'green-500' },
+  { id: '3', name: 'Animal Welfare', description: 'Caring for animals in need', icon: 'paw', color: 'amber-500' },
+  { id: '4', name: 'Homelessness', description: 'Supporting the homeless', icon: 'home', color: 'red-500' },
+  { id: '5', name: 'Food Security', description: 'Fighting hunger', icon: 'utensils', color: 'orange-500' },
+  { id: '6', name: 'Healthcare Access', description: 'Improving healthcare access', icon: 'heart-pulse', color: 'pink-500' },
+  { id: '7', name: 'Disaster Recovery', description: 'Helping after natural disasters', icon: 'cloud-rain', color: 'indigo-500' },
+  { id: '8', name: 'Child Development', description: 'Supporting children and youth', icon: 'baby', color: 'purple-500' },
+  { id: '9', name: 'Senior Care Support', description: 'Caring for elderly individuals', icon: 'walking-stick', color: 'sky-500' },
+  { id: '10', name: 'Disability Access', description: 'Improving accessibility', icon: 'accessibility', color: 'slate-500' },
+  { id: '11', name: 'Community Building', description: 'Building stronger communities', icon: 'users', color: 'violet-500' },
+  { id: '12', name: 'Mental Health Access', description: 'Improving mental health resources', icon: 'brain', color: 'teal-500' },
+  { id: '13', name: 'Literacy', description: 'Promoting literacy for all', icon: 'book-open', color: 'lime-500' },
+  { id: '14', name: 'Arts & Culture', description: 'Supporting arts and culture', icon: 'palette', color: 'fuchsia-500' },
+  { id: '15', name: 'Clean Water', description: 'Ensuring clean water access', icon: 'droplet', color: 'cyan-500' },
+  { id: '16', name: 'Transportation Access', description: 'Improving transportation access', icon: 'car', color: 'emerald-500' },
+  { id: '17', name: 'Women Empowerment', description: 'Supporting women\'s initiatives', icon: 'heart', color: 'rose-500' },
 ];
 
 // Mock Charities
 export const mockCharities: Charity[] = [
   {
-    id: 'charity1',
-    name: 'Green Earth Initiative',
-    logo: 'https://images.unsplash.com/photo-1569307371366-eb2e4efe5122?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Z3JlZW58ZW58MHwyfDB8fHww',
-    mission: 'Dedicated to environmental conservation and sustainable practices across urban and rural communities. We focus on creating green spaces and educating communities on sustainable living.',
-    website: 'https://example.com/greenearth',
-    sdgFocus: ['sdg11', 'sdg13', 'sdg15'],
-    contactEmail: 'info@greenearth.org'
+    id: '1',
+    name: 'Global Education Initiative',
+    logo: 'https://i.pravatar.cc/150?img=1',
+    mission: 'Providing educational opportunities to underserved communities worldwide.',
+    website: 'https://example.org/education',
+    sdgFocus: ['Quality Education', 'No Poverty', 'Reduced Inequalities'],
+    contactEmail: 'contact@education.org',
+    sdgs: ['Quality Education', 'No Poverty', 'Reduced Inequalities'],
   },
   {
-    id: 'charity2',
-    name: 'Water For All',
-    logo: 'https://images.unsplash.com/photo-1538300342682-cf57afb97285?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8d2F0ZXJ8ZW58MHx8MHx8fDA%3D',
-    mission: 'Providing clean water access to communities in developing regions through infrastructure projects, education, and sustainable water management solutions.',
-    website: 'https://example.com/waterforall',
-    sdgFocus: ['sdg3', 'sdg6'],
-    contactEmail: 'contact@waterforall.org'
+    id: '2',
+    name: 'Oceanic Conservation Fund',
+    logo: 'https://i.pravatar.cc/150?img=2',
+    mission: 'Dedicated to protecting marine ecosystems and promoting sustainable practices.',
+    website: 'https://example.org/ocean',
+    sdgFocus: ['Life Below Water', 'Climate Action', 'Responsible Consumption'],
+    contactEmail: 'contact@oceanfund.org',
+    sdgs: ['Life Below Water', 'Climate Action', 'Responsible Consumption'],
   },
   {
-    id: 'charity3',
-    name: 'Readers of Tomorrow',
-    logo: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D',
-    mission: 'Promoting literacy and education across all age groups through tutoring programs, book donations, and educational resources to underserved communities.',
-    website: 'https://example.com/readersoftomorrow',
-    sdgFocus: ['sdg4', 'sdg10'],
-    contactEmail: 'help@readersoftomorrow.org'
+    id: '3',
+    name: 'Tech For Good Foundation',
+    logo: 'https://i.pravatar.cc/150?img=3',
+    mission: 'Using technology to solve pressing social problems worldwide.',
+    website: 'https://example.org/techforgood',
+    sdgFocus: ['Industry Innovation', 'Quality Education', 'Partnerships'],
+    contactEmail: 'info@techgood.org',
+    sdgs: ['Industry Innovation', 'Quality Education', 'Partnerships'],
   },
   {
-    id: 'charity4',
-    name: 'Play It Forward',
-    logo: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3BvcnR8ZW58MHx8MHx8fDA%3D',
-    mission: 'Supporting youth development through sports by providing equipment, coaching, and safe play spaces to children in underserved communities.',
-    website: 'https://example.com/playitforward',
-    sdgFocus: ['sdg3', 'sdg10', 'sdg11'],
-    contactEmail: 'info@playitforward.org'
+    id: '4',
+    name: 'Community Health Alliance',
+    logo: 'https://i.pravatar.cc/150?img=4',
+    mission: 'Improving healthcare access in underserved communities.',
+    website: 'https://example.org/health',
+    sdgFocus: ['Good Health', 'Reduced Inequalities', 'Sustainable Cities'],
+    contactEmail: 'contact@healthalliance.org',
+    sdgs: ['Good Health', 'Reduced Inequalities', 'Sustainable Cities'],
   },
   {
-    id: 'charity5',
-    name: 'Homes For Everyone',
-    logo: 'https://images.unsplash.com/photo-1501183638710-841dd1904471?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG9tZXxlbnwwfHwwfHx8MA%3D%3D',
-    mission: 'Building affordable housing and providing shelter solutions for families in need, while advocating for housing equality and community development.',
-    website: 'https://example.com/homesforeveryone',
-    sdgFocus: ['sdg1', 'sdg10', 'sdg11'],
-    contactEmail: 'build@homesforeveryone.org'
+    id: '5',
+    name: 'Tree Planting Network',
+    logo: 'https://i.pravatar.cc/150?img=5',
+    mission: 'Restoring forests and fighting climate change through community initiatives.',
+    website: 'https://example.org/trees',
+    sdgFocus: ['Climate Action', 'Life on Land', 'Partnerships'],
+    contactEmail: 'plant@treenetwork.org',
+    sdgs: ['Climate Action', 'Life on Land', 'Partnerships'],
   },
   {
-    id: 'charity6',
-    name: 'Future Power Initiative',
-    logo: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29sYXJ8ZW58MHx8MHx8fDA%3D',
-    mission: 'Advancing renewable energy adoption through community-based projects, technology research, and education on sustainable energy practices.',
-    website: 'https://example.com/futurepower',
-    sdgFocus: ['sdg7', 'sdg9', 'sdg13'],
-    contactEmail: 'connect@futurepower.org'
-  }
+    id: '6',
+    name: 'Meals For All',
+    logo: 'https://i.pravatar.cc/150?img=6',
+    mission: 'Working to end hunger through food rescue and community kitchens.',
+    website: 'https://example.org/meals',
+    sdgFocus: ['Zero Hunger', 'Good Health', 'Responsible Consumption'],
+    contactEmail: 'info@mealsforall.org',
+    sdgs: ['Zero Hunger', 'Good Health', 'Responsible Consumption'],
+  },
 ];
 
-// Mock Marketplace Items
-export const mockMarketplace: Marketplace[] = [
+// Mock Marketplace Opportunities
+export const mockOpportunities: Marketplace[] = [
   {
     id: '1',
     type: 'volunteer',
-    title: 'Community Garden Project',
-    organization: 'Green Earth Initiative',
-    location: 'Multiple Locations',
-    description: 'Help build and maintain community gardens in urban areas',
-    image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-    impactCategory: 'sdg15', // Updated to SDG15 (Life on Land)
-    sdgGoals: ['sdg2', 'sdg11', 'sdg15'], // Multiple SDGs
-    commitment: '4-8 hours monthly',
+    title: 'Beach Cleanup Volunteers Needed',
+    organization: 'Oceanic Conservation Fund',
+    location: 'San Diego, CA',
+    description: 'Join our monthly beach cleanup initiative to help keep our coastal areas clean and protect marine life.',
+    logo: 'https://i.pravatar.cc/150?img=2',
+    image: '/placeholder.svg',
+    category: 'Environment',
+    date: '2023-07-15',
+    impactCategory: '2',
+    sdgGoals: ['Life Below Water', 'Climate Action'],
+    commitment: '3 hours',
     points: 120,
     slots: 25,
     slotsFilled: 18,
-    impact: 'Create green spaces in urban neighborhoods, growing fresh produce for communities',
-    requirements: [
-      'No experience required',
-      'Must be physically able to garden',
-      'Bring your own gardening gloves if possible'
-    ]
+    impact: 'Each volunteer will help remove approximately 15 pounds of trash from our beaches.',
+    requirements: ['Gloves', 'Sunscreen', 'Water bottle'],
+    sdgs: ['Life Below Water', 'Climate Action'],
   },
   {
     id: '2',
     type: 'fundraising',
-    title: 'Clean Water Initiative',
-    organization: 'Water For All',
-    location: 'Global',
-    description: 'Fundraising campaign to provide clean water access in developing regions',
-    image: 'https://images.unsplash.com/photo-1584982751601-97dcc096659c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1972&q=80',
-    impactCategory: 'sdg6', // Updated to SDG6 (Clean Water and Sanitation)
-    sdgGoals: ['sdg3', 'sdg6'], // Multiple SDGs
-    goal: 50000,
-    raised: 32750,
-    endDate: '2023-08-30T23:59:59Z',
-    points: 200,
-    impact: 'Provide clean water access to 10,000+ people in developing regions',
-    requirements: []
+    title: 'Support Clean Water Projects',
+    organization: 'Global Water Foundation',
+    location: 'Online',
+    description: 'Help us raise funds to install clean water systems in communities facing water scarcity and contamination.',
+    logo: 'https://i.pravatar.cc/150?img=3',
+    image: '/placeholder.svg',
+    category: 'Health',
+    date: '2023-07-10',
+    impactCategory: '15',
+    sdgGoals: ['Clean Water and Sanitation', 'Good Health'],
+    goal: 5000,
+    raised: 2345,
+    endDate: '2023-08-10',
+    points: 150,
+    impact: 'Every $100 raised provides clean water access for one person for a lifetime.',
+    requirements: [],
+    sdgs: ['Clean Water and Sanitation', 'Good Health'],
   },
   {
     id: '3',
     type: 'volunteer',
-    title: 'Literacy Program Tutor',
-    organization: 'Readers of Tomorrow',
-    location: 'Online',
-    description: 'Become a virtual tutor for adult literacy programs',
-    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1622&q=80',
-    impactCategory: 'sdg4', // Updated to SDG4 (Quality Education)
-    sdgGoals: ['sdg4', 'sdg10'], // Multiple SDGs
-    commitment: '2 hours weekly',
-    points: 100,
-    slots: 50,
-    slotsFilled: 37,
-    impact: 'Help adults improve their reading and writing skills for better employment opportunities',
-    requirements: [
-      'Strong reading and writing skills',
-      'Patient and supportive attitude',
-      'Minimum commitment of 3 months'
-    ]
+    title: 'Mentor Youth in Technology',
+    organization: 'Tech For Good Foundation',
+    location: 'Boston, MA',
+    description: 'Share your tech skills with underserved youth to help bridge the digital divide and inspire future technologists.',
+    logo: 'https://i.pravatar.cc/150?img=4',
+    image: '/placeholder.svg',
+    category: 'Education',
+    date: '2023-07-20',
+    impactCategory: '1',
+    sdgGoals: ['Quality Education', 'Reduced Inequalities'],
+    commitment: '2 hours/week for 8 weeks',
+    points: 200,
+    slots: 15,
+    slotsFilled: 7,
+    impact: 'Your mentorship can help a young person develop critical tech skills for future success.',
+    requirements: ['Basic coding knowledge', 'Patient teaching style', 'Laptop'],
+    sdgs: ['Quality Education', 'Reduced Inequalities'],
   },
   {
     id: '4',
     type: 'fundraising',
-    title: 'Youth Sports Equipment',
-    organization: 'Play It Forward',
-    location: 'National',
-    description: 'Raising funds to provide sports equipment to underserved communities',
-    image: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1807&q=80',
-    impactCategory: 'sdg3', // Updated to SDG3 (Good Health and Well-being)
-    sdgGoals: ['sdg3', 'sdg10'], // Multiple SDGs
-    goal: 25000,
-    raised: 10875,
-    endDate: '2023-09-15T23:59:59Z',
-    points: 150,
-    impact: 'Provide sports equipment to 50+ schools in low-income areas',
-    requirements: []
+    title: 'School Supplies for Children',
+    organization: 'Global Education Initiative',
+    location: 'Online',
+    description: 'Help us provide essential school supplies to children in low-income communities to support their education.',
+    logo: 'https://i.pravatar.cc/150?img=5',
+    image: '/placeholder.svg',
+    category: 'Education',
+    date: '2023-07-25',
+    impactCategory: '1',
+    sdgGoals: ['Quality Education', 'No Poverty'],
+    goal: 3000,
+    raised: 950,
+    endDate: '2023-08-25',
+    points: 100,
+    impact: 'Every $25 provides a complete set of school supplies for one child.',
+    requirements: [],
+    sdgs: ['Quality Education', 'No Poverty'],
   },
   {
     id: '5',
     type: 'volunteer',
-    title: 'Habitat Construction',
-    organization: 'Homes For Everyone',
-    location: 'Multiple Cities',
-    description: 'Help build affordable housing for families in need',
-    image: 'https://images.unsplash.com/photo-1523575708161-ad0fc2a9b951?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-    impactCategory: 'sdg11', // Updated to SDG11 (Sustainable Cities and Communities)
-    sdgGoals: ['sdg1', 'sdg11'], // Multiple SDGs
-    commitment: 'Full day events',
-    points: 200,
-    slots: 100,
-    slotsFilled: 65,
-    impact: 'Build affordable housing for families in need across multiple communities',
-    requirements: [
-      'No construction experience necessary',
-      'Must be 18 years or older',
-      'Closed-toe shoes required',
-      'Able to lift 25 pounds'
-    ]
+    title: 'Community Garden Maintenance',
+    organization: 'Urban Greening Project',
+    location: 'Chicago, IL',
+    description: 'Help maintain community gardens that provide fresh produce to food-insecure neighborhoods.',
+    logo: 'https://i.pravatar.cc/150?img=6',
+    image: '/placeholder.svg',
+    category: 'Environment',
+    date: '2023-08-05',
+    impactCategory: '5',
+    sdgGoals: ['Zero Hunger', 'Sustainable Cities'],
+    commitment: '4 hours',
+    points: 130,
+    slots: 20,
+    slotsFilled: 5,
+    impact: 'Your work will help produce approximately 500 pounds of fresh produce for the local community each season.',
+    requirements: ['Gardening gloves', 'Water bottle', 'Sun protection'],
+    sdgs: ['Zero Hunger', 'Sustainable Cities'],
   },
   {
     id: '6',
     type: 'fundraising',
-    title: 'Renewable Energy Projects',
-    organization: 'Future Power Initiative',
-    location: 'Global',
-    description: 'Funding small-scale renewable energy projects in rural communities',
-    image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80',
-    impactCategory: 'sdg7', // Updated to SDG7 (Affordable and Clean Energy)
-    sdgGoals: ['sdg7', 'sdg13'], // Multiple SDGs
-    goal: 75000,
-    raised: 41200,
-    endDate: '2023-10-01T23:59:59Z',
+    title: 'Emergency Medical Supplies',
+    organization: 'Community Health Alliance',
+    location: 'Online',
+    description: 'Support our efforts to provide emergency medical supplies to underserved clinics in rural areas.',
+    logo: 'https://i.pravatar.cc/150?img=7',
+    image: '/placeholder.svg',
+    category: 'Health',
+    date: '2023-08-10',
+    impactCategory: '4',
+    sdgGoals: ['Good Health', 'Reduced Inequalities'],
+    goal: 10000,
+    raised: 3750,
+    endDate: '2023-09-10',
     points: 180,
-    impact: 'Fund renewable energy projects that will benefit 20+ rural communities',
-    requirements: []
+    impact: 'Your contribution helps provide critical medical supplies to clinics serving thousands of patients annually.',
+    requirements: [],
+    sdgs: ['Good Health', 'Reduced Inequalities'],
   },
 ];
 
-export const getImpactCategoryById = (id: string): ImpactCategory | undefined => {
-  return mockImpactCategories.find(category => category.id === id);
-};
-
-export const getMarketplaceItemById = (id: string): Marketplace | undefined => {
-  return mockMarketplace.find(item => item.id === id);
+// Utility functions
+export const getOpportunityById = (id: string): Marketplace | undefined => {
+  return mockOpportunities.find(opp => opp.id === id);
 };
 
 export const getCharityById = (id: string): Charity | undefined => {
   return mockCharities.find(charity => charity.id === id);
 };
 
-// Get SDG goals data for a marketplace item
-export const getSDGsForMarketplaceItem = (id: string): ImpactCategory[] => {
-  const item = getMarketplaceItemById(id);
-  if (!item || !item.sdgGoals) return [];
-  
-  return item.sdgGoals
-    .map(sdgId => mockImpactCategories.find(sdg => sdg.id === sdgId))
-    .filter((sdg): sdg is ImpactCategory => sdg !== undefined);
+export const getImpactCategoryById = (id: string): ImpactCategory | undefined => {
+  return mockImpactCategories.find(category => category.id === id);
+};
+
+export const getOpportunitiesBySDG = (sdgName: string): Marketplace[] => {
+  return mockOpportunities.filter(opp => opp.sdgGoals?.includes(sdgName));
+};
+
+export const getOpportunitiesByCategory = (categoryId: string): Marketplace[] => {
+  return mockOpportunities.filter(opp => opp.impactCategory === categoryId);
 };

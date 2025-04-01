@@ -5,7 +5,7 @@ export interface Activity {
   title: string;
   description: string;
   date: string;
-  type: 'volunteer' | 'donation' | 'event' | 'fundraising' | 'learning' | 'other';
+  type: 'volunteer' | 'fundraising' | 'learning' | 'other';
   points: number;
   impact: string;
   hours?: number;
@@ -99,11 +99,10 @@ export interface Dashboard {
   name: string;
   description: string;
   widgetIds: string[];
-  userId: string;
+  userId?: string;
   isDefault?: boolean;
   createdAt: string;
   updatedAt?: string;
-  widgets?: DashboardWidget[];
 }
 
 export interface Marketplace {
