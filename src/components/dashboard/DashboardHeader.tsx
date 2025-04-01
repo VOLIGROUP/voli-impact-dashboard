@@ -12,6 +12,7 @@ interface DashboardHeaderProps {
   setSelectedDashboardId: (id: string) => void;
   dashboards: Dashboard[];
   onOpenImpactDialog: () => void;
+  onOpenNewDashboardDialog: () => void;
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
@@ -19,7 +20,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   selectedDashboardId,
   setSelectedDashboardId,
   dashboards,
-  onOpenImpactDialog
+  onOpenImpactDialog,
+  onOpenNewDashboardDialog
 }) => {
   return (
     <div className="flex items-center justify-between">
@@ -59,7 +61,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           Log Impact
         </Button>
         
-        <Button className="bg-voli-primary hover:bg-voli-secondary text-black">
+        <Button 
+          onClick={onOpenNewDashboardDialog}
+          className="bg-voli-primary hover:bg-voli-secondary text-black"
+        >
           <PlusCircle className="h-4 w-4 mr-2" />
           New Dashboard
         </Button>

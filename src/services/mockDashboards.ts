@@ -48,3 +48,31 @@ export const getWidgetsForDashboard = (dashboardId: string): Dashboard['widgets'
   const dashboard = getDashboardById(dashboardId);
   return dashboard ? dashboard.widgets : [];
 };
+
+// Function to add a new dashboard
+export const addDashboard = (name: string, description: string): Dashboard => {
+  const newId = String(mockDashboards.length + 1);
+  const now = new Date().toISOString();
+  
+  const newDashboard: Dashboard = {
+    id: newId,
+    name,
+    description,
+    isDefault: false,
+    createdAt: now,
+    updatedAt: now,
+    widgets: [],
+  };
+  
+  mockDashboards.push(newDashboard);
+  return newDashboard;
+};
+
+// Function to add a widget to a dashboard
+export const addWidgetToDashboard = (dashboardId: string, widgetId: string): void => {
+  const dashboard = getDashboardById(dashboardId);
+  if (dashboard) {
+    dashboard.widgets.push(widgetId);
+    dashboard.updatedAt = new Date().toISOString();
+  }
+};
