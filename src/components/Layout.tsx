@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Bell,
   Search,
-  Home
+  Home,
+  Menu
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -126,6 +127,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="mt-3 w-full flex items-center justify-center py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
@@ -137,6 +140,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {/* Top Navbar */}
         <header className="bg-white border-b border-gray-200 py-4 px-6 flex items-center justify-between">
           <div className="flex items-center space-x-4 w-1/2">
+            {/* Toggle button for mobile/tablet */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setCollapsed(!collapsed)} 
+              className="md:hidden"
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <Menu size={20} />
+            </Button>
+            
             <div className="relative w-full max-w-md">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
