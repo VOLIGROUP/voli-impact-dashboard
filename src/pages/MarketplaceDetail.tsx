@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -5,7 +6,7 @@ import { mockImpactCategories, getMarketplaceItemById } from '../services/mockMa
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, MapPin, Calendar, Users, DollarSign, Clock, Heart, Share2, Globe, Mail, Phone } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Users, DollarSign, Clock, Heart, Share2, Globe, Mail, Phone, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -40,6 +41,10 @@ const MarketplaceDetail: React.FC = () => {
   }
   
   const category = mockImpactCategories.find(cat => cat.id === item.impactCategory);
+  
+  const handleViewCauseProfile = () => {
+    navigate('/marketplace', { state: { viewCauseId: item.impactCategory } });
+  };
   
   return (
     <Layout>
@@ -133,9 +138,16 @@ const MarketplaceDetail: React.FC = () => {
             <Card>
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="px-3 py-1">
-                    {category?.name || 'General'}
-                  </Badge>
+                  {category && (
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2"
+                      onClick={handleViewCauseProfile}
+                    >
+                      <span>{category.name}</span>
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Badge className="bg-black/70 text-white">
                     {item.points} points
                   </Badge>

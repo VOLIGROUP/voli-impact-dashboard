@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -5,19 +6,23 @@ import { mockMarketplace, mockImpactCategories, getMarketplaceItemById } from '.
 import { scrapeVolunteerOpportunities } from '../services/VolunteerScraperService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, MapPin, Calendar, Users, DollarSign, Clock, Heart, RefreshCw } from 'lucide-react';
-import { Progress } from "@/components/ui/progress";
-import { Marketplace as MarketplaceType } from '../types/dashboard';
+import { Badge } from "@/components/ui/badge";
+import { Search, MapPin, RefreshCw, PlusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { Marketplace as MarketplaceType } from '../types/dashboard';
+
+import MarketplaceCard from '../components/marketplace/MarketplaceCard';
+import CauseProfile from '../components/marketplace/CauseProfile';
+import CreateOpportunityDialog from '../components/marketplace/CreateOpportunityDialog';
 
 const Marketplace: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceType[]>(mockMarketplace);
   const [isLoading, setIsLoading] = useState(false);
+  const [viewingCauseId, setViewingCauseId] = useState<string | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { toast } = useToast();
   
   const loadScrapedOpportunities = async () => {
@@ -60,6 +65,32 @@ const Marketplace: React.FC = () => {
   const volunteerItems = filteredItems.filter(item => item.type === 'volunteer');
   const fundraisingItems = filteredItems.filter(item => item.type === 'fundraising');
 
+  const handleCreateOpportunity = (newOpportunity: Partial<MarketplaceType>) => {
+    // Add the new opportunity to the marketplace items
+    setMarketplaceItems(prev => [newOpportunity as MarketplaceType, ...prev]);
+  };
+
+  const handleCategoryClick = (categoryId: string | null) => {
+    if (categoryId) {
+      setViewingCauseId(categoryId);
+    } else {
+      setSelectedCategory(null);
+    }
+  };
+
+  // If viewing a cause profile, show that instead of the main marketplace
+  if (viewingCauseId) {
+    return (
+      <Layout>
+        <CauseProfile 
+          causeId={viewingCauseId} 
+          opportunities={marketplaceItems}
+          onBackClick={() => setViewingCauseId(null)}
+        />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -84,6 +115,14 @@ const Marketplace: React.FC = () => {
             
             <Button 
               className="bg-voli-primary hover:bg-voli-secondary text-black whitespace-nowrap"
+              onClick={() => setCreateDialogOpen(true)}
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Create Opportunity
+            </Button>
+            
+            <Button 
+              variant="outline"
               onClick={loadScrapedOpportunities}
               disabled={isLoading}
             >
@@ -116,7 +155,13 @@ const Marketplace: React.FC = () => {
               key={category.id}
               variant={selectedCategory === category.id ? "default" : "outline"}
               className={selectedCategory === category.id ? `bg-voli-primary hover:bg-voli-secondary text-black cursor-pointer` : "cursor-pointer"}
-              onClick={() => setSelectedCategory(category.id)}
+              onClick={() => {
+                if (selectedCategory === category.id) {
+                  handleCategoryClick(category.id);
+                } else {
+                  setSelectedCategory(category.id);
+                }
+              }}
             >
               {category.name}
             </Badge>
@@ -173,122 +218,13 @@ const Marketplace: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <CreateOpportunityDialog 
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSubmit={handleCreateOpportunity}
+      />
     </Layout>
-  );
-};
-
-const MarketplaceCard = ({ item }) => {
-  const navigate = useNavigate();
-  const category = mockImpactCategories.find(cat => cat.id === item.impactCategory);
-  
-  const handleCardClick = () => {
-    navigate(`/marketplace/${item.id}`);
-  };
-  
-  const handleSaveClick = (e) => {
-    e.stopPropagation();
-  };
-  
-  const handleActionClick = (e) => {
-    e.stopPropagation();
-    navigate(`/marketplace/${item.id}`);
-  };
-  
-  return (
-    <Card 
-      className="voli-card overflow-hidden flex flex-col cursor-pointer hover:shadow-md transition-all"
-      onClick={handleCardClick}
-    >
-      <div className="relative h-40 overflow-hidden">
-        <img 
-          src={item.image} 
-          alt={item.title}
-          className="w-full h-full object-cover object-center"
-        />
-        <Badge 
-          className={`absolute top-3 left-3 ${
-            item.type === 'volunteer' 
-            ? 'bg-blue-100 text-blue-800'
-            : 'bg-purple-100 text-purple-800'
-          }`}
-        >
-          {item.type === 'volunteer' ? 'Volunteer' : 'Fundraising'}
-        </Badge>
-        
-        {category && (
-          <Badge className="absolute top-3 right-3 bg-white/70 backdrop-blur-sm">
-            {category.name}
-          </Badge>
-        )}
-        
-        <Badge className="absolute bottom-3 right-3 bg-black/70 text-white backdrop-blur-sm">
-          {item.points} points
-        </Badge>
-      </div>
-      
-      <CardContent className="p-4 flex-1">
-        <h3 className="font-semibold text-lg mb-1 line-clamp-2">{item.title}</h3>
-        <p className="text-sm text-gray-600 mb-2">{item.organization}</p>
-        
-        <div className="flex items-center text-xs text-gray-500 mb-3">
-          <MapPin className="h-3 w-3 mr-1" />
-          <span>{item.location}</span>
-        </div>
-        
-        <p className="text-sm text-gray-700 mb-4 line-clamp-3">{item.description}</p>
-        
-        {item.type === 'volunteer' && (
-          <div className="mt-auto">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="flex items-center text-gray-600">
-                <Users className="h-3 w-3 mr-1" />
-                {item.slotsFilled} / {item.slots} spots filled
-              </span>
-              <span className="flex items-center text-gray-600">
-                <Clock className="h-3 w-3 mr-1" />
-                {item.commitment}
-              </span>
-            </div>
-            <Progress value={(item.slotsFilled / item.slots) * 100} className="h-1.5 bg-gray-100" />
-          </div>
-        )}
-        
-        {item.type === 'fundraising' && (
-          <div className="mt-auto">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="flex items-center text-gray-600">
-                <DollarSign className="h-3 w-3 mr-1" />
-                ${item.raised.toLocaleString()} raised of ${item.goal.toLocaleString()}
-              </span>
-              <span className="flex items-center text-gray-600">
-                <Calendar className="h-3 w-3 mr-1" />
-                {new Date(item.endDate).toLocaleDateString()}
-              </span>
-            </div>
-            <Progress value={(item.raised / item.goal) * 100} className="h-1.5 bg-gray-100" />
-          </div>
-        )}
-      </CardContent>
-      
-      <CardFooter className="px-4 py-3 border-t border-gray-100 flex justify-between">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-1/2"
-          onClick={handleSaveClick}
-        >
-          <Heart className="h-4 w-4 mr-2" />
-          Save
-        </Button>
-        <Button 
-          size="sm" 
-          className="w-1/2 bg-voli-primary hover:bg-voli-secondary text-black"
-          onClick={handleActionClick}
-        >
-          {item.type === 'volunteer' ? 'Sign Up' : 'Donate'}
-        </Button>
-      </CardFooter>
-    </Card>
   );
 };
 
