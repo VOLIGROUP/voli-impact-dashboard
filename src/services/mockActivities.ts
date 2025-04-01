@@ -113,7 +113,7 @@ export const mockActivities: Activity[] = [
     points: 50,
     impact: 'Educated 75 community members on sustainable practices',
     hours: 6
-  },
+  }
 ];
 
 // Function to get activities for a specific user
