@@ -8,8 +8,9 @@ import MetricCard from '../components/dashboard/MetricCard';
 import ChartCard from '../components/dashboard/ChartCard';
 import ActivityCard from '../components/dashboard/ActivityCard';
 import LeaderboardCard from '../components/dashboard/LeaderboardCard';
+import VolunteeringMetricCard from '../components/dashboard/VolunteeringMetricCard';
 import { Button } from "@/components/ui/button";
-import { PlusCircle, LayoutGrid, Settings2, FileUp } from 'lucide-react';
+import { PlusCircle, LayoutGrid, Settings2, FileUp, Clock } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,21 @@ const Dashboard: React.FC = () => {
   const renderWidget = (widget: DashboardWidget) => {
     switch (widget.type) {
       case 'metric':
+        // Use VolunteeringMetricCard for the first metric (Total Volunteering Hours)
+        if (widget.id === '1') {
+          return (
+            <VolunteeringMetricCard
+              key={widget.id}
+              title={widget.title}
+              value={widget.value || 0}
+              prefix={widget.prefix}
+              suffix={widget.suffix}
+              change={widget.change}
+              period={widget.period}
+              color={widget.color}
+            />
+          );
+        }
         return (
           <MetricCard
             key={widget.id}
@@ -80,9 +96,9 @@ const Dashboard: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Volunteering Dashboard</h1>
             <p className="text-gray-500">
-              Welcome back, {user?.name}! Here's your impact overview.
+              Welcome back, {user?.name}! Here's your volunteering impact overview.
             </p>
           </div>
           
@@ -114,8 +130,8 @@ const Dashboard: React.FC = () => {
               onClick={() => setImpactDialogOpen(true)} 
               className="bg-voli-primary hover:bg-voli-secondary text-black"
             >
-              <FileUp className="h-4 w-4 mr-2" />
-              Add Impact Data
+              <Clock className="h-4 w-4 mr-2" />
+              Log Hours
             </Button>
             
             <Button className="bg-voli-primary hover:bg-voli-secondary text-black">

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Upload } from "lucide-react";
+import { FileText, Upload, Clock } from "lucide-react";
 import ImpactDataForm from "./ImpactDataForm";
 
 interface AddImpactDataDialogProps {
@@ -15,9 +15,9 @@ const AddImpactDataDialog = ({ open, onOpenChange }: AddImpactDataDialogProps) =
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Add Impact Data</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Log Volunteering Hours</DialogTitle>
           <DialogDescription>
-            Use this form to add new impact data to your dashboard
+            Track your volunteer activities and impact
           </DialogDescription>
         </DialogHeader>
         
@@ -39,9 +39,9 @@ const AddImpactDataDialog = ({ open, onOpenChange }: AddImpactDataDialogProps) =
           
           <TabsContent value="upload" className="pt-4">
             <div className="border-2 border-dashed rounded-lg p-10 text-center">
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
+              <Clock className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-4 text-sm text-gray-500">
-                Drag and drop your CSV file here, or click to browse
+                Drag and drop your volunteer hours CSV file here, or click to browse
               </p>
               <input
                 type="file"
