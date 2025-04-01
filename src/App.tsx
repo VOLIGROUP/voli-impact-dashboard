@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +18,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Welcome from "./pages/Welcome";
 import Index from "./pages/Index";
+import ImpactHistory from "./pages/ImpactHistory";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +83,11 @@ const App = () => (
             <Route path="/achievements" element={
               <ProtectedRoute>
                 <Achievements />
+              </ProtectedRoute>
+            } />
+            <Route path="/impact-history" element={
+              <ProtectedRoute>
+                <ImpactHistory />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
