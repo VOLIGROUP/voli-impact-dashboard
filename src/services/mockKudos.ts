@@ -1,8 +1,8 @@
 
-import { Kudos } from '@/types/dashboard';
+import { Kudos } from '../types/dashboard';
 
-// Mock Kudos data
-let mockKudos: Kudos[] = [
+// Mock kudos data
+const mockKudos: Kudos[] = [
   {
     id: 'k1',
     fromUserId: '3',
@@ -35,21 +35,49 @@ let mockKudos: Kudos[] = [
     date: '2023-07-12T16:45:00Z',
     seen: true,
   },
+  {
+    id: 'k5',
+    fromUserId: '2',
+    toUserId: '5',
+    message: 'The design work you did for our last campaign was outstanding!',
+    date: '2023-07-20T10:15:00Z',
+    seen: false,
+  },
+  {
+    id: 'k6',
+    fromUserId: '6',
+    toUserId: '3',
+    message: 'Thank you for all your help with onboarding me to the team.',
+    date: '2023-08-05T13:20:00Z',
+    seen: false,
+  },
 ];
 
-// Get kudos received by a user
-export const getUserReceivedKudos = (userId: string): Kudos[] => {
+// Get all kudos for a specific user
+export const getKudosForUser = (userId: string): Kudos[] => {
   return mockKudos.filter(kudos => kudos.toUserId === userId);
-};
-
-// Get kudos given by a user
-export const getUserGivenKudos = (userId: string): Kudos[] => {
-  return mockKudos.filter(kudos => kudos.fromUserId === userId);
 };
 
 // Get unseen kudos for a user
 export const getUnseenKudos = (userId: string): Kudos[] => {
   return mockKudos.filter(kudos => kudos.toUserId === userId && !kudos.seen);
+};
+
+// Mark kudos as seen
+export const markKudosAsSeen = (kudosId: string): void => {
+  const kudos = mockKudos.find(k => k.id === kudosId);
+  if (kudos) {
+    kudos.seen = true;
+  }
+};
+
+// Mark all kudos as seen for a user
+export const markAllKudosAsSeenForUser = (userId: string): void => {
+  mockKudos.forEach(kudos => {
+    if (kudos.toUserId === userId) {
+      kudos.seen = true;
+    }
+  });
 };
 
 // Add a new kudos
@@ -60,23 +88,11 @@ export const addKudos = (fromUserId: string, toUserId: string, message: string):
     toUserId,
     message,
     date: new Date().toISOString(),
-    seen: false,
+    seen: false
   };
   
   mockKudos.push(newKudos);
   return newKudos;
 };
 
-// Mark a kudos as seen
-export const markKudosAsSeen = (kudosId: string): void => {
-  mockKudos = mockKudos.map(kudos => 
-    kudos.id === kudosId ? { ...kudos, seen: true } : kudos
-  );
-};
-
-// Mark all kudos as seen for a user
-export const markAllKudosAsSeenForUser = (userId: string): void => {
-  mockKudos = mockKudos.map(kudos => 
-    kudos.toUserId === userId ? { ...kudos, seen: true } : kudos
-  );
-};
+export default mockKudos;

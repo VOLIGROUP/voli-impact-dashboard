@@ -6,10 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Plus, MapPin, Users } from 'lucide-react';
+import { Search, Plus, MapPin, Users, LayoutList } from 'lucide-react';
 import MapView from '../components/team/MapView';
 import TeamByLocation from '../components/team/TeamByLocation';
 import UserProfileDialog from '../components/team/UserProfileDialog';
+import EmployeesTab from '../components/team/EmployeesTab';
 import { useToast } from "@/hooks/use-toast";
 
 const Team: React.FC = () => {
@@ -89,8 +90,12 @@ const Team: React.FC = () => {
         <Tabs defaultValue="list" className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="list" className="flex items-center">
-              <Users className="mr-2 h-4 w-4" />
+              <LayoutList className="mr-2 h-4 w-4" />
               Team List
+            </TabsTrigger>
+            <TabsTrigger value="employees" className="flex items-center">
+              <Users className="mr-2 h-4 w-4" />
+              Employees
             </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center">
               <MapPin className="mr-2 h-4 w-4" />
@@ -129,6 +134,13 @@ const Team: React.FC = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+          
+          <TabsContent value="employees">
+            <EmployeesTab 
+              users={filteredUsers} 
+              onViewProfile={handleOpenUserProfile} 
+            />
           </TabsContent>
           
           <TabsContent value="map">
