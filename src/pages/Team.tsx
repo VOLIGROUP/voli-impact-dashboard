@@ -11,6 +11,7 @@ import MapView from '../components/team/MapView';
 import TeamByLocation from '../components/team/TeamByLocation';
 import UserProfileDialog from '../components/team/UserProfileDialog';
 import EmployeesTab from '../components/team/EmployeesTab';
+import TeamPerformanceComparison from '../components/team/TeamPerformanceComparison';
 import { useToast } from "@/hooks/use-toast";
 
 const Team: React.FC = () => {
@@ -113,6 +114,11 @@ const Team: React.FC = () => {
                     </p>
                   </div>
                 </div>
+                
+                {/* Add the team performance comparison component */}
+                {Object.keys(usersByLocation).length > 1 && (
+                  <TeamPerformanceComparison usersByLocation={usersByLocation} />
+                )}
                 
                 {Object.keys(usersByLocation).length > 0 ? (
                   <div className="space-y-6">

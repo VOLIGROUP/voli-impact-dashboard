@@ -113,6 +113,74 @@ export const mockActivities: Activity[] = [
     points: 50,
     impact: 'Educated 75 community members on sustainable practices',
     hours: 6
+  },
+  // Add some activities for New York team members
+  {
+    id: 'act11',
+    userId: '12',
+    title: 'Corporate Sustainability Workshop',
+    description: 'Led workshop for Fortune 500 companies on sustainability practices',
+    date: '2023-07-15T13:00:00Z',
+    type: 'event',
+    points: 85,
+    impact: 'Influenced sustainability policies at 5 major corporations',
+    hours: 8
+  },
+  {
+    id: 'act12',
+    userId: '13',
+    title: 'Hackathon for Social Good',
+    description: 'Organized coding marathon focused on nonprofit tech solutions',
+    date: '2023-06-30T09:00:00Z',
+    type: 'volunteer',
+    points: 90,
+    impact: 'Created 12 new tech solutions for local nonprofits',
+    hours: 24
+  },
+  {
+    id: 'act13',
+    userId: '15',
+    title: 'Digital Marketing Campaign',
+    description: 'Pro bono marketing for environmental organizations',
+    date: '2023-08-05T10:00:00Z',
+    type: 'volunteer',
+    points: 60,
+    impact: 'Increased nonprofit engagement by 35%',
+    hours: 15
+  },
+  // Add some activities for London team members
+  {
+    id: 'act14',
+    userId: '22',
+    title: 'Sustainable Finance Summit',
+    description: 'Organized panel discussions on ESG investing',
+    date: '2023-07-20T11:00:00Z',
+    type: 'event',
+    points: 75,
+    impact: 'Connected 30+ impact investors with sustainable startups',
+    hours: 12
+  },
+  {
+    id: 'act15',
+    userId: '24',
+    title: 'Design Sprint for Accessibility',
+    description: 'Conducted design workshops for accessible products',
+    date: '2023-08-10T14:00:00Z',
+    type: 'volunteer',
+    points: 65,
+    impact: 'Improved accessibility for 3 nonprofit websites',
+    hours: 18
+  },
+  {
+    id: 'act16',
+    userId: '27',
+    title: 'Thames River Cleanup',
+    description: 'Led a team of volunteers in river cleanup',
+    date: '2023-06-25T08:00:00Z',
+    type: 'volunteer',
+    points: 80,
+    impact: 'Removed 300kg of waste from London waterways',
+    hours: 6
   }
 ];
 
