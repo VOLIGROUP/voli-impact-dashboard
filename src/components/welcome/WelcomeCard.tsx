@@ -11,6 +11,7 @@ export interface WelcomeCardProps {
   icon?: React.ReactNode;
   to?: string;
   buttonText?: string;
+  variant?: 'default' | 'admin' | 'user';
 }
 
 const WelcomeCard: React.FC<WelcomeCardProps> = ({ 
@@ -18,10 +19,22 @@ const WelcomeCard: React.FC<WelcomeCardProps> = ({
   description = "Start measuring and tracking your impact today", 
   icon, 
   to = "/dashboard", 
-  buttonText = "Get Started" 
+  buttonText = "Get Started",
+  variant = 'default'
 }) => {
+  const getCardClassName = () => {
+    switch (variant) {
+      case 'admin':
+        return "border-2 border-amber-400/60";
+      case 'user':
+        return "border-2 border-blue-400/60";
+      default:
+        return "border-2 border-voli-primary/20";
+    }
+  };
+
   return (
-    <Card className="border-2 border-voli-primary/20">
+    <Card className={getCardClassName()}>
       <CardContent className="p-6 space-y-4">
         <div className="flex flex-col items-center text-center space-y-2">
           {icon && <div className="text-voli-primary">{icon}</div>}
