@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -571,7 +572,10 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>SDG's Supporting</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select 
+                        onValueChange={(value) => field.onChange(value)} 
+                        defaultValue={typeof field.value === 'string' ? field.value : ''}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select an SDG" />
@@ -1017,3 +1021,379 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                           placeholder="Describe the impact of this volunteer work"
                           className="resize-none"
                           {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Add Blood Donation section */}
+        {voliType === "blood" && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Blood Donation</h2>
+            <FormField
+              control={form.control}
+              name="bloodType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Blood Donation Type</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setBloodType(value);
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select donation type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="whole">Whole Blood</SelectItem>
+                      <SelectItem value="plasma">Plasma</SelectItem>
+                      <SelectItem value="platelets">Platelets</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {bloodType && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="numberOfDonations"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Donations</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="0" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setBloodDonations(Number(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {livesSaved > 0 && `Your donation(s) potentially saved ${livesSaved} lives!`}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="donorLocation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Donor Location</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select donation location" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {lifebloodLocations.map((location) => (
+                            <SelectItem key={location.id} value={location.id}>
+                              {location.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="donationDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Date of Donation</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="proofOfCompletion"
+                  render={({ field: { value, onChange, ...fieldProps } }) => (
+                    <FormItem>
+                      <FormLabel>Proof of Donation</FormLabel>
+                      <FormDescription>
+                        Upload your donation certificate or receipt
+                      </FormDescription>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            onChange(file);
+                          }}
+                          {...fieldProps}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Add Item Donation section */}
+        {voliType === "items" && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Items (Give Aways)</h2>
+            <FormField
+              control={form.control}
+              name="itemType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Item Type</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setItemType(value);
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select item type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="clothing">Clothing</SelectItem>
+                      <SelectItem value="food">Food</SelectItem>
+                      <SelectItem value="furniture">Furniture</SelectItem>
+                      <SelectItem value="electronics">Electronics</SelectItem>
+                      <SelectItem value="books">Books</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {itemType && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="itemName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Item Name/Description</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter item description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="causeSupported"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cause Supported</FormLabel>
+                      <CharitySelect field={field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="itemUnits"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Units</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="0" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setUnits(Number(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="valuePerUnit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Value Per Unit</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="0.00" 
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setValuePerUnit(Number(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      {totalValue > 0 && (
+                        <FormDescription>
+                          Total Value: ${totalValue.toFixed(2)}
+                        </FormDescription>
+                      )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="donationDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Date of Donation</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="impactOutcome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Impact Outcome or Testimony</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe the impact of this donation"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="proofOfCompletion"
+                  render={({ field: { value, onChange, ...fieldProps } }) => (
+                    <FormItem>
+                      <FormLabel>Proof of Donation</FormLabel>
+                      <FormDescription>
+                        Upload a receipt or acknowledgment from the receiving organization
+                      </FormDescription>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            onChange(file);
+                          }}
+                          {...fieldProps}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Submit button - Always visible */}
+        <Button 
+          type="submit" 
+          className="w-full bg-voli-primary hover:bg-voli-secondary text-black"
+        >
+          Submit VOLI Data
+        </Button>
+      </form>
+    </Form>
+  );
+};
+
+export default ImpactDataForm;
