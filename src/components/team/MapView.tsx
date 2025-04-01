@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { User } from '@/types/auth';
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +11,7 @@ interface MapViewProps {
 
 declare global {
   interface Window {
-    google: any;
+    google: typeof google;
     initMap: () => void;
   }
 }
