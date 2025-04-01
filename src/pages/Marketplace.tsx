@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -65,7 +64,6 @@ const Marketplace: React.FC = () => {
     }
   };
 
-  // Clear selected filter
   const clearFilter = () => {
     setSelectedCategory(null);
     setFilterOpen(false);
@@ -87,19 +85,19 @@ const Marketplace: React.FC = () => {
     <Layout>
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
+          <div className="md:max-w-lg">
             <h1 className="text-2xl font-bold text-gray-900">Impact Marketplace</h1>
-            <p className="text-gray-500">
+            <p className="text-xs text-gray-500">
               Discover volunteering opportunities and fundraising campaigns aligned with the UN Sustainable Development Goals
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative w-full max-w-xs">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search opportunities..."
-                className="pl-9"
+                className="pl-10 py-6 text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
