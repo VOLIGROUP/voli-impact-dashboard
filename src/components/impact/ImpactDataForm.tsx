@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -20,6 +19,12 @@ interface ImpactDataFormProps {
   onComplete: () => void;
 }
 
+// Interface for charity data from API
+interface CharityData {
+  id: string;
+  name: string;
+}
+
 // SDGs options
 const sdgOptions = [
   { id: "1", label: "No Poverty" },
@@ -39,16 +44,6 @@ const sdgOptions = [
   { id: "15", label: "Life on Land" },
   { id: "16", label: "Peace, Justice and Strong Institutions" },
   { id: "17", label: "Partnerships for the Goals" },
-];
-
-// Mock charity database
-const charitiesDatabase = [
-  { id: "c1", name: "Red Cross" },
-  { id: "c2", name: "World Wildlife Fund" },
-  { id: "c3", name: "Doctors Without Borders" },
-  { id: "c4", name: "Save the Children" },
-  { id: "c5", name: "UNICEF" },
-  { id: "c6", name: "Habitat for Humanity" },
 ];
 
 // Mock missions database
@@ -92,6 +87,9 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
   const [units, setUnits] = useState<number>(0);
   const [valuePerUnit, setValuePerUnit] = useState<number>(0);
   const [totalValue, setTotalValue] = useState<number>(0);
+  const [charities, setCharities] = useState<CharityData[]>([]);
+  const [isLoadingCharities, setIsLoadingCharities] = useState(false);
+  const [charityError, setCharityError] = useState<string | null>(null);
 
   // Create form with zod validation
   // Updated form schema to include all possible field names
@@ -137,6 +135,53 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
       voliType: "",
     },
   });
+
+  // Fetch charities data from API
+  useEffect(() => {
+    const fetchCharities = async () => {
+      setIsLoadingCharities(true);
+      setCharityError(null);
+      try {
+        const response = await fetch(
+          "https://data.gov.au/data/api/3/action/datastore_search?resource_id=eb1e6be4-5b13-4feb-b28e-388bf7c26f93&limit=50"
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch charities: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.result && data.result.records) {
+          // Transform the API data to our expected format
+          const charityData: CharityData[] = data.result.records.map((record: any) => ({
+            id: record._id || record.ABN || String(record.id),
+            name: record.CharityName || record.LegalName || record.name
+          }));
+          
+          setCharities(charityData);
+        } else {
+          throw new Error("Failed to parse charity data");
+        }
+      } catch (error) {
+        console.error("Error fetching charities:", error);
+        setCharityError("Failed to load charities. Using fallback data.");
+        // Fallback to mock data if API fails
+        setCharities([
+          { id: "c1", name: "Red Cross" },
+          { id: "c2", name: "World Wildlife Fund" },
+          { id: "c3", name: "Doctors Without Borders" },
+          { id: "c4", name: "Save the Children" },
+          { id: "c5", name: "UNICEF" },
+          { id: "c6", name: "Habitat for Humanity" },
+        ]);
+      } finally {
+        setIsLoadingCharities(false);
+      }
+    };
+
+    fetchCharities();
+  }, []);
 
   // Watch for form value changes to update state
   const watchVoliType = form.watch("voliType");
@@ -275,11 +320,12 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a cause" />
+                            <SelectValue placeholder={isLoadingCharities ? "Loading charities..." : "Select a cause"} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {charitiesDatabase.map((charity) => (
+                          {charityError && <p className="text-xs text-red-500 px-2 py-1">{charityError}</p>}
+                          {charities.map((charity) => (
                             <SelectItem key={charity.id} value={charity.id}>
                               {charity.name}
                             </SelectItem>
@@ -486,11 +532,12 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a cause" />
+                            <SelectValue placeholder={isLoadingCharities ? "Loading charities..." : "Select a cause"} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {charitiesDatabase.map((charity) => (
+                          {charityError && <p className="text-xs text-red-500 px-2 py-1">{charityError}</p>}
+                          {charities.map((charity) => (
                             <SelectItem key={charity.id} value={charity.id}>
                               {charity.name}
                             </SelectItem>
@@ -763,11 +810,12 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a cause" />
+                            <SelectValue placeholder={isLoadingCharities ? "Loading charities..." : "Select a cause"} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {charitiesDatabase.map((charity) => (
+                          {charityError && <p className="text-xs text-red-500 px-2 py-1">{charityError}</p>}
+                          {charities.map((charity) => (
                             <SelectItem key={charity.id} value={charity.id}>
                               {charity.name}
                             </SelectItem>
@@ -955,455 +1003,3 @@ const ImpactDataForm = ({ onComplete }: ImpactDataFormProps) => {
                                 !field.value && "text-muted-foreground"
                               )}
                             >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="impactOutcome"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Impact Outcome or Testimony</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe the impact of this work"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="proofOfCompletion"
-                  render={({ field: { value, onChange, ...fieldProps } }) => (
-                    <FormItem>
-                      <FormLabel>Proof of Completion</FormLabel>
-                      <FormDescription>
-                        Attach proof for verification status
-                      </FormDescription>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            onChange(file);
-                          }}
-                          {...fieldProps}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-          </div>
-        )}
-
-        {voliType === "blood" && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Blood</h2>
-            <FormField
-              control={form.control}
-              name="bloodType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Donation Type</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setBloodType(value);
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select donation type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="whole">Whole Blood</SelectItem>
-                      <SelectItem value="plasma">Plasma</SelectItem>
-                      <SelectItem value="platelets">Platelets</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="numberOfDonations"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Number of Donations</FormLabel>
-                  <FormDescription>
-                    1 donation = 1 person (not 1 group booking of 2 or more)
-                  </FormDescription>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      {...field}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        field.onChange(value);
-                        setBloodDonations(value || 0);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {bloodDonations > 0 && (
-              <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                <h3 className="text-lg font-semibold text-green-800">Lives Saved</h3>
-                <div className="mt-2 text-2xl font-bold text-green-600">
-                  {livesSaved} {livesSaved === 1 ? 'Life' : 'Lives'}
-                </div>
-                <p className="text-sm text-green-700 mt-1">
-                  Each donation saves up to 3 lives
-                </p>
-              </div>
-            )}
-
-            <FormField
-              control={form.control}
-              name="donationDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date Completed</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="donorLocation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location of Donor Centre</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a location" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {lifebloodLocations.map((location) => (
-                        <SelectItem key={location.id} value={location.id}>
-                          {location.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="proofOfCompletion"
-              render={({ field: { value, onChange, ...fieldProps } }) => (
-                <FormItem>
-                  <FormLabel>Proof of Completion</FormLabel>
-                  <FormDescription>
-                    Attach proof for verification status
-                  </FormDescription>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        onChange(file);
-                      }}
-                      {...fieldProps}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        )}
-
-        {voliType === "items" && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Items (Give Aways)</h2>
-            <FormField
-              control={form.control}
-              name="itemType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Item Type</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setItemType(value);
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select item type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="product">Product Donation</SelectItem>
-                      <SelectItem value="drive">Item Drive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {itemType && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="donationTitle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title of the Donation</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter donation title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="causeSupported"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cause Supported</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a cause" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {charitiesDatabase.map((charity) => (
-                            <SelectItem key={charity.id} value={charity.id}>
-                              {charity.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="missionContributes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mission Donation Contributes To</FormLabel>
-                      <FormDescription>Select all that apply</FormDescription>
-                      <div className="grid grid-cols-2 gap-2 mt-2">
-                        {missionsDatabase.map((mission) => (
-                          <div key={mission.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`mission-${mission.id}`}
-                              value={mission.id}
-                              onCheckedChange={(checked) => {
-                                const currentValues = Array.isArray(field.value) ? field.value : [];
-                                if (checked) {
-                                  field.onChange([...currentValues, mission.id]);
-                                } else {
-                                  field.onChange(currentValues.filter((value) => value !== mission.id));
-                                }
-                              }}
-                            />
-                            <label
-                              htmlFor={`mission-${mission.id}`}
-                              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              {mission.label}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="space-y-4 rounded-md border p-4">
-                  <h3 className="font-medium">Item Details</h3>
-                  <FormField
-                    control={form.control}
-                    name="itemName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Item</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter item name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="itemUnits"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Units</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="0"
-                              {...field}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value);
-                                field.onChange(value);
-                                setUnits(value || 0);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="valuePerUnit"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Retail Value per Unit</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="0.00"
-                              {...field}
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value);
-                                field.onChange(value);
-                                setValuePerUnit(value || 0);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {units > 0 && valuePerUnit > 0 && (
-                    <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                      <h3 className="text-lg font-semibold text-green-800">Total Value</h3>
-                      <div className="mt-2 text-2xl font-bold text-green-600">
-                        ${totalValue.toFixed(2)}
-                      </div>
-                      <p className="text-sm text-green-700 mt-1">
-                        {units} units × ${valuePerUnit.toFixed(2)} per unit
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="impactOutcome"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Impact Outcome or Testimony</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe the impact of this donation"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-          </div>
-        )}
-
-        <div className="flex justify-end space-x-4 pt-4">
-          <Button variant="outline" type="button" onClick={onComplete}>
-            Cancel
-          </Button>
-          <Button type="submit" className="bg-voli-primary text-black hover:bg-voli-secondary">
-            Submit
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
-
-export default ImpactDataForm;
